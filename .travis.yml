@@ -3,13 +3,10 @@ if: type != push OR branch = master OR branch =~ /^\d+\.\d+(\.\d+)?(-\S*)?$/
 
 language: generic
 
-stages:
-  - name: test
 
 jobs:
   include:
     - name: macOS / Swift 4.2.1 (Xcode 10.1)
-      stage: test
       os: osx
       language: swift
       osx_image: xcode10.1
