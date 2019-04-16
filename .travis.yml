@@ -10,13 +10,17 @@ jobs:
       os: osx
       language: swift
       osx_image: xcode10.1
-      script: swift test
+      script:
+        - eval "$(curl -sL swift.vapor.sh/ci)"
+        - swift test
 
     - name: macOS / Swift 5.0.0 (Xcode 10.2)
       os: osx
       language: swift
       osx_image: xcode10.2
-      script: swift test
+      script: 
+        - eval "$(curl -sL swift.vapor.sh/ci)"
+        - swift test
 
     - &linux
       name: Linux / Swift 4.2.2
