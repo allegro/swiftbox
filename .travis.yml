@@ -21,23 +21,9 @@ jobs:
           casks: 
             - vapor
 
-# todo: fix nil on swift 5 regression
-#    - name: macOS / Swift 5.0.0 (Xcode 10.2)
-#      os: osx
-#      language: swift
-#      osx_image: xcode10.2
-#      script:
-#        - eval "$(curl -sL swift.vapor.sh/ci)"
-#        - swift test
-
     - &linux
       name: Linux / Swift 4.2.2
       env: SWIFT_VERSION=4.2.2
       install: eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
       script: swift test
-
-# todo: fix nil on swift 5 regression      
-#    - <<: *linux
-#      name: Linux / Swift 5.0.0
-#      env: SWIFT_VERSION=5.0
 
