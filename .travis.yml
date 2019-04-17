@@ -7,8 +7,6 @@ language: generic
 jobs:
   include:
     - name: macOS / Swift 4.2.1 (Xcode 10.1)
-- sudo apt-get install gnupg
-
       os: osx
       language: swift
       osx_image: xcode10.1
