@@ -3,7 +3,7 @@ if: type != push OR branch = master OR branch =~ /^\d+\.\d+(\.\d+)?(-\S*)?$/
 
 language: generic
 
-
+  
 jobs:
   include:
     - name: macOS / Swift 4.2.1 (Xcode 10.1)
@@ -16,7 +16,7 @@ jobs:
       addons:
         homebrew:
           taps: vapor/tap
-          casks: vapor/tap/vapor
+          casks: vapor
 
 # todo: fix nil on swift 5 regression
 #    - name: macOS / Swift 5.0.0 (Xcode 10.2)
