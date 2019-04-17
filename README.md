@@ -20,9 +20,9 @@ Coming soon: Integration with https://github.com/apple/swift-metrics and https:/
 
 ## SwiftBox Configuration
 
-SwiftBox Configuration allows to pass type-safe configuration such as command line, environment variables and other sources(e.g Vault) by declaring one simple struct. Configuration can be inherited from multiple sources (commandline flag, environment variable, vault etc).
+SwiftBox Configuration allows to pass type-safe configuration such as command line, environment variables and external providers (e.g Vault) by declaring one simple struct. Configuration can be inherited from multiple sources simultaneously.
 
-Configuration can be automatically populated with:
+Feed the configuration with:
 - Command line arguments: `./yourapp --config:simple=test --config:nested.number=1 --config:array.0=string`
 - Environment variables: `SIMPLE=test NESTED_NUMBER=1 ARRAY_0=string ./yourapp`
 - JSON
@@ -34,6 +34,7 @@ SwiftBox Configuration supports:
 - optionals
 - type-safety
 - nesting (structs and arrays)
+- environment variables prefixes (avoid conflicting with system variables)
 
 ### Usage
 #### 1. Import
