@@ -15,10 +15,11 @@ jobs:
 
       addons:
         homebrew:
+          packages: 
+            - libressl
           taps: vapor/tap
           casks: 
             - vapor
-            - openssl
 
 # todo: fix nil on swift 5 regression
 #    - name: macOS / Swift 5.0.0 (Xcode 10.2)
