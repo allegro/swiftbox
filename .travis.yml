@@ -7,12 +7,18 @@ language: generic
 jobs:
   include:
     - name: macOS / Swift 4.2.1 (Xcode 10.1)
+- sudo apt-get install gnupg
+
       os: osx
       language: swift
       osx_image: xcode10.1
       script:
-        - eval "$(curl -sL swift.vapor.sh/ci)"
         - swift test
+
+      addons:
+        homebrew:
+          taps: vapor/tap
+          casks: vapor/tap/vapor
 
 # todo: fix nil on swift 5 regression
 #    - name: macOS / Swift 5.0.0 (Xcode 10.2)
