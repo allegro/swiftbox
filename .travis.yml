@@ -16,7 +16,9 @@ jobs:
       addons:
         homebrew:
           taps: vapor/tap
-          casks: vapor
+          casks: 
+            - vapor
+            - libressl
 
 # todo: fix nil on swift 5 regression
 #    - name: macOS / Swift 5.0.0 (Xcode 10.2)
