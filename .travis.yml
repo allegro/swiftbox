@@ -1,0 +1,29 @@
+# only run for: merge commits, releases and pull-requests
+if: type != push OR branch = master OR branch =~ /^\d+\.\d+(\.\d+)?(-\S*)?$/
+
+language: generic
+
+  
+jobs:
+  include:
+    - name: macOS / Swift 4.2.1 (Xcode 10.1)
+      os: osx
+      language: swift
+      osx_image: xcode10.1
+      script:
+        - swift test
+
+      addons:
+        homebrew:
+          packages: 
+            - libressl
+          taps: vapor/tap
+          casks: 
+            - vapor
+
+    - &linux
+      name: Linux / Swift 4.2.2
+      env: SWIFT_VERSION=4.2.2
+      install: eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
+      script: swift test
+

@@ -9,7 +9,7 @@ class ConfigManagerTests: XCTestCase {
             public static var configuration: SampleConfig? = nil
         }
 
-        try SampleConfig.bootstrap(from: [EnvSource()])
+        try SampleConfig.bootstrap(from: [EnvSource(dataSource: [:])])
         XCTAssertNil(SampleConfig.global.value)
     }
 
@@ -98,8 +98,8 @@ class ConfigManagerTests: XCTestCase {
             public static var configuration: SampleConfig? = nil
         }
 
-        try SampleConfig.bootstrap(from: [EnvSource()])
-        XCTAssertThrowsError(try SampleConfig.bootstrap(from: [EnvSource()])) { error in
+        try SampleConfig.bootstrap(from: [DictionarySource(dataSource: [:])])
+        XCTAssertThrowsError(try SampleConfig.bootstrap(from: [DictionarySource(dataSource: [:])])) { error in
             switch error as! ConfigManagerError {
             case .alreadyBootstrapped:
                 break
