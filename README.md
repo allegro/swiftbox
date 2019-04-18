@@ -1,10 +1,28 @@
+
 # SwiftBox
-SwiftBox is a package that helps to build Swift/Vapor microservices.
+
+SwiftBox is a SwiftNIO based package that helps building Swift/Vapor microservices.
+
+[![Build Status](https://travis-ci.org/allegro/swiftbox.svg?branch=master)](https://travis-ci.org/allegro/swiftbox)
+[![Swift 4.1](https://img.shields.io/badge/swift-4.1-brightgreen.svg)]
+[![Linux](https://img.shields.io/badge/linux-brightgreen.svg)]
+[![MacOS](https://img.shields.io/badge/macos-brightgreen.svg)]
+
+## What's included?
+
+Running microservices with Swift requires:
+- logging capabilities
+- accessing configuration(e.g from Vault store)
+- pushing metrics to the metric store.
+
+Coming soon: Integration with https://github.com/apple/swift-metrics and https://github.com/apple/swift-log when they are ready.
+
 
 ## SwiftBox Configuration
-SwiftBox Configuration allows to pass type-safe configuration from command line, environment variables and other sources by declaring one simple struct.
 
-Configuration can be automatically populated with:
+SwiftBox Configuration allows to pass type-safe configuration such as command line, environment variables and external providers (e.g Vault) by declaring one simple struct. Configuration can be inherited from multiple sources simultaneously.
+
+Feed the configuration with:
 - Command line arguments: `./yourapp --config:simple=test --config:nested.number=1 --config:array.0=string`
 - Environment variables: `SIMPLE=test NESTED_NUMBER=1 ARRAY_0=string ./yourapp`
 - JSON
@@ -16,6 +34,7 @@ SwiftBox Configuration supports:
 - optionals
 - type-safety
 - nesting (structs and arrays)
+- environment variables prefixes (avoid conflicting with system variables)
 
 ### Usage
 #### 1. Import
