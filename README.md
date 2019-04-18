@@ -4,9 +4,9 @@
 SwiftBox is a SwiftNIO based package that helps building Swift/Vapor microservices.
 
 [![Build Status](https://travis-ci.org/allegro/swiftbox.svg?branch=master)](https://travis-ci.org/allegro/swiftbox)
-[![Swift 4.1](https://img.shields.io/badge/swift-4.1-brightgreen.svg)]
-[![Linux](https://img.shields.io/badge/linux-brightgreen.svg)]
-[![MacOS](https://img.shields.io/badge/macos-brightgreen.svg)]
+![Swift 4.1](https://img.shields.io/badge/swift-4.1-brightgreen.svg)
+![Linux](https://img.shields.io/badge/linux-brightgreen.svg)
+![MacOS](https://img.shields.io/badge/macos-brightgreen.svg)
 
 ## What's included?
 
