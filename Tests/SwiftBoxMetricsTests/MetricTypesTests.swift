@@ -20,13 +20,13 @@ class MetricTypesTests: XCTestCase {
 
     func testGaugeStatsDFormat() throws {
         var metric = GaugeMetric(name: "test", value: 2, type: .set)
-        XCTAssertEqual(metric.getStatsDLine(), "test:2|g")
+        XCTAssertEqual(metric.getStatsDLine(), "test:2.0|g")
 
         metric = GaugeMetric(name: "test", value: 2, type: .increment)
-        XCTAssertEqual(metric.getStatsDLine(), "test:+2|g")
+        XCTAssertEqual(metric.getStatsDLine(), "test:+2.0|g")
 
         metric = GaugeMetric(name: "test", value: 2, type: .decrement)
-        XCTAssertEqual(metric.getStatsDLine(), "test:-2|g")
+        XCTAssertEqual(metric.getStatsDLine(), "test:-2.0|g")
     }
 
     static var allTests: [(String, (MetricTypesTests) -> () throws -> Void)] {

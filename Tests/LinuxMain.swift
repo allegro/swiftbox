@@ -14,12 +14,9 @@ XCTMain([
     testCase(Logger2Tests.allTests),
     testCase(LoggingManagerTests.allTests),
 
-    // Metrics
-    testCase(MetricsHandlerTests.allTests),
+    // MetricsTimeAmountTests
     testCase(StatsDHandlerTests.allTests),
-    testCase(MetricsManagerTests.allTests),
     testCase(MetricTypesTests.allTests),
-    testCase(TimeAmountTests.allTests),
     testCase(TCPStatsDClientTests.allTests),
     testCase(UDPStatsDClientTests.allTests),
 

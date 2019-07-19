@@ -39,7 +39,7 @@ public struct TCPConnectionConfig {
     var connectionFactory: TCPConnectionFactoryType
 
     public init(
-            host: String,
+        host: String,
         port: Int = 8125,
         connectionTimeout: TimeAmount = TimeAmount.milliseconds(1000),
         threadGroup: MultiThreadedEventLoopGroup? = nil,
@@ -100,7 +100,7 @@ public class TCPStatsDClient: StatsDClientProtocol {
             logger.warning(error.localizedDescription)
             self.connection = nil
             if retriesLeft > 0 {
-                Thread.sleep(forTimeInterval: self.config.pushRetryInterval.toSeconds())
+                Thread.sleep(forTimeInterval: Double(self.config.pushRetryInterval.nanoseconds) / 1_000_000_000)
                 self.pushMetric(metricLine: metricLine, retriesLeft: retriesLeft - 1)
             } else {
                 logger.error("Couldn't send metric to StatsD, tried \(self.config.maxPushRetries) times")

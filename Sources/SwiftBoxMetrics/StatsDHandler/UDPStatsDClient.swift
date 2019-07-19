@@ -28,7 +28,7 @@ public struct UDPConnectionConfig {
     var connectionFactory: UDPConnectionFactoryType
 
     public init(
-            host: String,
+        host: String,
         port: Int = 8125,
         threadGroup: MultiThreadedEventLoopGroup? = nil,
         connectionFactory: @escaping UDPConnectionFactoryType = UDPConnectionFactory

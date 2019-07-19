@@ -12,6 +12,7 @@ let package = Package(
         ],
         dependencies: [
             .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
+            .package(url: "https://github.com/apple/swift-metrics.git", from: "1.0.0"),
             .package(url: "https://github.com/allegro/swift-junit.git", from: "1.0.0"),
         ],
 
@@ -27,7 +28,7 @@ let package = Package(
 
             .target(
                     name: "SwiftBoxMetrics",
-                    dependencies: ["SwiftBoxLogging"]
+                    dependencies: ["SwiftBoxLogging", "Metrics"]
             ),
             .testTarget(
                     name: "SwiftBoxMetricsTests",

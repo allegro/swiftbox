@@ -2,42 +2,8 @@ import Foundation
 import XCTest
 
 @testable import NIO
+@testable import Metrics
 @testable import SwiftBoxMetrics
-
-
-class FakeHandler: MetricsHandler {
-    var gatheredMetrics: [Metric] = []
-
-    func sendMetric(metric: Metric) {
-        self.gatheredMetrics.append(metric)
-    }
-}
-
-class MetricsHandlerTests: XCTestCase {
-
-    func testHandlerWithTimerShouldRecordTimeCorrectly() throws {
-        let metricName = "test.label"
-        let sleepTime = 2.0
-
-        Metrics.bootstrap(FakeHandler())
-
-        Metrics.global.withTimer(name: metricName) {
-            Thread.sleep(forTimeInterval: sleepTime)
-        }
-
-        let metric = (Metrics.global as! FakeHandler).gatheredMetrics[0] as! TimerMetric
-        XCTAssertEqual(metric.name, metricName)
-
-	//FIXME: DI for timerprovider.
-        //XCTAssertEqual(metric.value, sleepTime * 1000, accuracy: 200)
-    }
-
-    static var allTests: [(String, (MetricsHandlerTests) -> () throws -> Void)] {
-        return [
-            ("testHandlerWithTimerShouldRecordTimeCorrectly", testHandlerWithTimerShouldRecordTimeCorrectly),
-        ]
-    }
-}
 
 class StatsDHandlerTests: XCTestCase {
 
@@ -49,16 +15,44 @@ class StatsDHandlerTests: XCTestCase {
         }
     }
 
-    func testHandlerShouldGatherMetricsProperly() throws {
+    func testHandlerShouldGatherTimerMetricsProperly() throws {
         let handler = try StatsDMetricsHandler(
                 baseMetricPath: "test.path",
                 client: FakeStatsDClient()
         )
-        handler.sendMetric(metric: TimerMetric(name: "test", value: 1.01))
+        let timer = handler.makeTimer(label: "sample.timer", dimensions: [])
+        timer.recordNanoseconds(1_010_000)
 
         let fakeClient = (handler.client as! FakeStatsDClient)
         let metric = fakeClient.gatheredMetrics[0]
-        XCTAssertEqual(metric, "test.path.test:1.01|ms")
+        XCTAssertEqual(metric, "test.path.sample.timer:1.01|ms")
+    }
+
+    func testHandlerShouldGatherRecorderMetricsProperly() throws {
+        let handler = try StatsDMetricsHandler(
+            baseMetricPath: "test.path",
+            client: FakeStatsDClient()
+        )
+        let recorder = handler.makeRecorder(label: "sample.recorder", dimensions: [], aggregate: false)
+        recorder.record(Int64(11))
+
+        let fakeClient = (handler.client as! FakeStatsDClient)
+        let metric = fakeClient.gatheredMetrics[0]
+        XCTAssertEqual(metric, "test.path.sample.recorder:11.0|g")
+    }
+
+    func testHandlerShouldGatherCounterMetricsProperly() throws {
+        let handler = try StatsDMetricsHandler(
+            baseMetricPath: "test.path",
+            client: FakeStatsDClient()
+        )
+
+        let counter = handler.makeCounter(label: "sample.counter", dimensions: [])
+        counter.increment(by: 11)
+
+        let fakeClient = (handler.client as! FakeStatsDClient)
+        let metric = fakeClient.gatheredMetrics[0]
+        XCTAssertEqual(metric, "test.path.sample.counter:11|c")
     }
 
     func testHandlerShouldValidateBasePath() throws {
@@ -81,7 +75,9 @@ class StatsDHandlerTests: XCTestCase {
 
     static var allTests: [(String, (StatsDHandlerTests) -> () throws -> Void)] {
         return [
-            ("testHandlerShouldGatherMetricsProperly", testHandlerShouldGatherMetricsProperly),
+            ("testHandlerShouldGatherTimerMetricsProperly", testHandlerShouldGatherTimerMetricsProperly),
+            ("testHandlerShouldGatherRecorderMetricsProperly", testHandlerShouldGatherRecorderMetricsProperly),
+            ("testHandlerShouldGatherCounterMetricsProperly", testHandlerShouldGatherCounterMetricsProperly),
             ("testHandlerShouldValidateBasePath", testHandlerShouldValidateBasePath),
             ("testHandlerShouldThrowWhenBasePathIsWrong", testHandlerShouldThrowWhenBasePathIsWrong),
         ]
