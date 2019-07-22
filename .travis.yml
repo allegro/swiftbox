@@ -10,8 +10,6 @@ jobs:
       os: osx
       language: swift
       osx_image: xcode10.1
-      env:
-        - HOMEBREW_NO_AUTO_UPDATE=0
       script:
         - swift test
       addons:
