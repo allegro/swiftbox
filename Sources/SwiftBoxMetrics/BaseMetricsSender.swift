@@ -1,11 +1,14 @@
 import Metrics
 
-public protocol BaseMetricsSender: CounterHandler, RecorderHandler, TimerHandler {
+public protocol MetricsHandler: CounterHandler, TimerHandler, RecorderHandler {}
+public typealias MetricsHandlerFactory = (String) -> MetricsHandler
+
+public protocol BaseMetricsHandler: MetricsHandler {
     func getMetricPath() -> String
     func sendMetric(metric: StatsDMetric)
 }
 
-extension BaseMetricsSender {
+extension BaseMetricsHandler {
     public func increment(by: Int64) {
         self.sendMetric(metric: CounterMetric(name: self.getMetricPath(), value: by))
     }
