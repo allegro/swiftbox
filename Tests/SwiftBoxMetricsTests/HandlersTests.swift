@@ -15,44 +15,44 @@ class StatsDHandlerTests: XCTestCase {
         }
     }
 
-    func testHandlerShouldGatherTimerMetricsProperly() throws {
+    func testHandlerShouldGatherTimerMetrics() throws {
         let handler = try StatsDMetricsHandler(
-                baseMetricPath: "test.path",
+                baseMetricPath: "com.allegro",
                 client: FakeStatsDClient()
         )
-        let timer = handler.makeTimer(label: "sample.timer", dimensions: [])
+        let timer = handler.makeTimer(label: "stats.timer", dimensions: [])
         timer.recordNanoseconds(1_010_000)
 
         let fakeClient = (handler.client as! FakeStatsDClient)
         let metric = fakeClient.gatheredMetrics[0]
-        XCTAssertEqual(metric, "test.path.sample.timer:1.01|ms")
+        XCTAssertEqual(metric, "com.allegro.stats.timer:1.01|ms")
     }
 
-    func testHandlerShouldGatherRecorderMetricsProperly() throws {
+    func testHandlerShouldGatherRecorderMetrics() throws {
         let handler = try StatsDMetricsHandler(
-            baseMetricPath: "test.path",
+            baseMetricPath: "com.allegro",
             client: FakeStatsDClient()
         )
-        let recorder = handler.makeRecorder(label: "sample.recorder", dimensions: [], aggregate: false)
+        let recorder = handler.makeRecorder(label: "stats.recorder", dimensions: [], aggregate: false)
         recorder.record(Int64(11))
 
         let fakeClient = (handler.client as! FakeStatsDClient)
         let metric = fakeClient.gatheredMetrics[0]
-        XCTAssertEqual(metric, "test.path.sample.recorder:11.0|g")
+        XCTAssertEqual(metric, "com.allegro.stats.recorder:11.0|g")
     }
 
-    func testHandlerShouldGatherCounterMetricsProperly() throws {
+    func testHandlerShouldGatherCounterMetrics() throws {
         let handler = try StatsDMetricsHandler(
-            baseMetricPath: "test.path",
+            baseMetricPath: "com.allegro",
             client: FakeStatsDClient()
         )
 
-        let counter = handler.makeCounter(label: "sample.counter", dimensions: [])
+        let counter = handler.makeCounter(label: "stats.counter", dimensions: [])
         counter.increment(by: 11)
 
         let fakeClient = (handler.client as! FakeStatsDClient)
         let metric = fakeClient.gatheredMetrics[0]
-        XCTAssertEqual(metric, "test.path.sample.counter:11|c")
+        XCTAssertEqual(metric, "com.allegro.stats.counter:11|c")
     }
 
     func testHandlerShouldValidateBasePath() throws {
@@ -75,9 +75,9 @@ class StatsDHandlerTests: XCTestCase {
 
     static var allTests: [(String, (StatsDHandlerTests) -> () throws -> Void)] {
         return [
-            ("testHandlerShouldGatherTimerMetricsProperly", testHandlerShouldGatherTimerMetricsProperly),
-            ("testHandlerShouldGatherRecorderMetricsProperly", testHandlerShouldGatherRecorderMetricsProperly),
-            ("testHandlerShouldGatherCounterMetricsProperly", testHandlerShouldGatherCounterMetricsProperly),
+            ("testHandlerShouldGatherTimerMetrics", testHandlerShouldGatherTimerMetrics),
+            ("testHandlerShouldGatherRecorderMetrics", testHandlerShouldGatherRecorderMetrics),
+            ("testHandlerShouldGatherCounterMetrics", testHandlerShouldGatherCounterMetrics),
             ("testHandlerShouldValidateBasePath", testHandlerShouldValidateBasePath),
             ("testHandlerShouldThrowWhenBasePathIsWrong", testHandlerShouldThrowWhenBasePathIsWrong),
         ]

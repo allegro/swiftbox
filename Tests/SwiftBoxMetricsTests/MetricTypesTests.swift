@@ -18,22 +18,28 @@ class MetricTypesTests: XCTestCase {
         XCTAssertEqual(metric.getStatsDLine(), "test:2|c")
     }
 
-    func testGaugeStatsDFormat() throws {
-        var metric = GaugeMetric(name: "test", value: 2, type: .set)
+    func testGaugeStatsDFormatWhenTypeIsSet() throws {
+        let metric = GaugeMetric(name: "test", value: 2, type: .set)
         XCTAssertEqual(metric.getStatsDLine(), "test:2.0|g")
+    }
 
-        metric = GaugeMetric(name: "test", value: 2, type: .increment)
+    func testGaugeStatsDFormatWhenTypeIsIncrement() throws {
+        let metric = GaugeMetric(name: "test", value: 2, type: .increment)
         XCTAssertEqual(metric.getStatsDLine(), "test:+2.0|g")
+    }
 
-        metric = GaugeMetric(name: "test", value: 2, type: .decrement)
+    func testGaugeStatsDFormatWhenTypeIsDecrement() throws {
+        let metric = GaugeMetric(name: "test", value: 2, type: .decrement)
         XCTAssertEqual(metric.getStatsDLine(), "test:-2.0|g")
     }
 
     static var allTests: [(String, (MetricTypesTests) -> () throws -> Void)] {
         return [
             ("testTimerStatsDFormat", testTimerStatsDFormat),
+            ("testGaugeStatsDFormatWhenTypeIsSet", testGaugeStatsDFormatWhenTypeIsSet),
+            ("testGaugeStatsDFormatWhenTypeIsIncrement", testGaugeStatsDFormatWhenTypeIsIncrement),
+            ("testGaugeStatsDFormatWhenTypeIsDecrement", testGaugeStatsDFormatWhenTypeIsDecrement),
             ("testCounterStatsDFormat", testCounterStatsDFormat),
-            ("testGaugeStatsDFormat", testGaugeStatsDFormat),
         ]
     }
 }

@@ -9,9 +9,7 @@ extension BaseMetricsSender {
     public func increment(by: Int64) {
         self.sendMetric(metric: CounterMetric(name: self.getMetricPath(), value: by))
     }
-    public func reset() {
-        fatalError("Reset is not supported")
-    }
+    public func reset() {}
 
     public func record(_ value: Int64) {
         self.record(Double(value))
