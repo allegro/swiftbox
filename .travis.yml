@@ -12,11 +12,12 @@ jobs:
       osx_image: xcode10.1
       script:
         - swift test
-
       addons:
         homebrew:
+          update: true
           packages: 
             - libressl
+          update: true
           taps: vapor/tap
           casks: 
             - vapor

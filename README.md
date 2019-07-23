@@ -15,7 +15,7 @@ Running microservices with Swift requires:
 - accessing configuration(e.g from Vault store)
 - pushing metrics to the metric store.
 
-Coming soon: Integration with https://github.com/apple/swift-metrics and https://github.com/apple/swift-log when they are ready.
+Coming soon: Integration with https://github.com/apple/swift-log.
 
 
 ## SwiftBox Configuration
@@ -312,7 +312,7 @@ private func configureLogging(_ config: inout Config, _ env: inout Environment, 
 
 
 ## SwiftBoxMetrics
-Metrics for microservices, based on SSWG standard with Statsd built-in support.
+StatsD and Logger handlers for official [swift-metrics](https://github.com/apple/swift-metrics) API.
 
 Supported metric types:
 - Counters
@@ -323,14 +323,16 @@ Supported metric types:
 
 #### 1. Import
 ```swift
+import Metrics
 import SwiftBoxMetrics
 ```
 
 #### 2. Bootstrap
 Metrics must be bootstrap with Handler, that conforms to `MetricsHandler` protocol:
 ```swift
-Metrics.bootstrap(
-    try StatsDMetricsHandler(
+// StatsD Handler initialization
+MetricsSystem.bootstrap(
+    try! StatsDMetricsHandler(
         baseMetricPath: AppConfig.global.statsd.basePath!,
         client: UDPStatsDClient(
             config: UDPConnectionConfig(
@@ -340,22 +342,13 @@ Metrics.bootstrap(
         )
     )
 )
+
+// Logger Handler initialization
+MetricsSystem.bootstrap(LoggerMetricsHandler())
 ```
 
 #### 3. Usage
-Timer metric may be used via convenient closure calls:
-```swift
-let result = try Metrics.global.withTimer(name: "myComputations") { () -> Double in
-    return self.someComputationsToMeasure()
-}
-```
-
-Manual usage:
-```swift
-Metrics.global.sendMetric(metric: TimerMetric(name: "timerMetric", value: 1001.1))
-Metrics.global.sendMetric(metric: CounterMetric(name: "counterMetric", value: 1))
-Metrics.global.sendMetric(metric: GaugeMetric(name: "gaugeMetric", value: 1, type: .increment))
-```
+Detailed usage details may be found in official [swift-metrics](https://github.com/apple/swift-metrics) GitHub repository.
 
 ### Handlers
 
