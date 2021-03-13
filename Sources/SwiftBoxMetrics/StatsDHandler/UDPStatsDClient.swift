@@ -68,22 +68,24 @@ public class UDPStatsDClient: StatsDClientProtocol {
     /// Gets connection and writes metrics in time format to opened socket channel.
     public func pushMetric(metricLine: String) {
         // TODO(Blejwi): Send with batches
-        _ = getConnection().map { channel in
-            logger.debug("\(channel)")
-            logger.debug("Sending line: \"\(metricLine)\"")
+        _ = getConnection()
+            .map { channel in
+                logger.debug("\(channel)")
+                logger.debug("Sending line: \"\(metricLine)\"")
 
-            let remoteAddr = try SocketAddress.newAddressResolving(host: self.config.host, port: self.config.port)
-            logger.debug("\(remoteAddr)")
+                // TODO: Fix
+                let remoteAddr = try! SocketAddress.makeAddressResolvingHost(self.config.host, port: self.config.port)
+                logger.debug("\(remoteAddr)")
 
-            let line = metricLine + "\n"
-            var buffer = channel.allocator.buffer(capacity: line.utf8.count)
-            buffer.write(string: line)
+                let line = metricLine + "\n"
+                var buffer = channel.allocator.buffer(capacity: line.utf8.count)
+                buffer.writeString(line)
 
-            let envelope = AddressedEnvelope(remoteAddress: remoteAddr, data: buffer)
-            channel.writeAndFlush(envelope, promise: nil)
-        }.thenIfErrorThrowing { error in
-            logger.warning(error.localizedDescription)
-            logger.warning(String(describing: error))
-        }
+                let envelope = AddressedEnvelope(remoteAddress: remoteAddr, data: buffer)
+                channel.writeAndFlush(envelope, promise: nil)
+            }.flatMapErrorThrowing { error in
+                logger.warning(error.localizedDescription)
+                logger.warning(String(describing: error))
+            }
     }
 }

@@ -3,31 +3,67 @@ import Vapor
 
 public typealias PrintHandler = (String) -> Void
 
-public final class Logger2: Logger {
+public protocol LoggerProtocol {
+    func debug(_ message: String)
+    func error(_ message: String)
+    func warning(_ message: String)
+}
+
+public class PrintLogger: LoggerProtocol {
+    public func debug(_ message: String) {
+        // fatalError("debug")
+    }
+
+    public func error(_ message: String) {
+        // fatalError("error")
+    }
+
+    public func warning(_ message: String) {
+        // fatalError("warning")
+    }
+}
+
+public class LogHandler2: LogHandler {
     let name: String
     let printFunction: PrintHandler
 
-    public init(_ name: String, printFunction: @escaping PrintHandler = { text in print(text) }) {
+    public var metadata: Logger.Metadata = [:]
+    public var logLevel: Logger.Level = .debug
+
+    public init(
+        _ name: String,
+        printFunction: @escaping PrintHandler = { text in print(text) }
+    ) {
         self.name = name
         self.printFunction = printFunction
     }
 
-    public func log(_ string: String, at level: LogLevel, file: String, function: String, line: UInt, column _: UInt) {
+    public subscript(metadataKey _: String) -> Logger.Metadata.Value? {
+        get {
+            nil
+        }
+        set(newValue) {
+
+        }
+    }
+
+    public func log(level: Logger.Level,
+             message: Logger.Message,
+             metadata: Logger.Metadata?,
+             source: String,
+             file: String,
+             function: String,
+             line: UInt) {
         let event = Logger2Event(
-            message: string, logger: name, level: level.description, file: file, line: line, function: function
+            message: message.description,
+            logger: name,
+            level: level.description,
+            file: file,
+            line: line,
+            function: function
         )
         printFunction(event.toJSON())
         fflush(stdout)
-    }
-}
-
-extension Logger2: ServiceType {
-    public static var serviceSupports: [Any.Type] {
-        return [Logger.self]
-    }
-
-    public static func makeService(for _: Container) throws -> Logger2 {
-        return Logger2("root")
     }
 }
 

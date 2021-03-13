@@ -90,21 +90,22 @@ public class TCPStatsDClient: StatsDClientProtocol {
     /// Gets connection and writes metrics in time format to opened socket channel.
     public func pushMetric(metricLine: String, retriesLeft: Int) {
         // TODO(Blejwi): Send with batches
-        _ = getConnection().flatMap { channel in
-            logger.debug("Sending line: \"\(metricLine)\", retries left: \(retriesLeft)")
-            let line = metricLine + "\n"
-            var buffer = channel.allocator.buffer(capacity: line.utf8.count)
-            buffer.write(string: line)
-            return channel.writeAndFlush(buffer)
-        }.thenIfErrorThrowing { error in
-            logger.warning(error.localizedDescription)
-            self.connection = nil
-            if retriesLeft > 0 {
-                Thread.sleep(forTimeInterval: Double(self.config.pushRetryInterval.nanoseconds) / 1_000_000_000)
-                self.pushMetric(metricLine: metricLine, retriesLeft: retriesLeft - 1)
-            } else {
-                logger.error("Couldn't send metric to StatsD, tried \(self.config.maxPushRetries) times")
+        getConnection()
+            .map { channel in
+                logger.debug("Sending line: \"\(metricLine)\", retries left: \(retriesLeft)")
+                let line = metricLine + "\n"
+                var buffer = channel.allocator.buffer(capacity: line.utf8.count)
+                buffer.writeString(line)
+                channel.writeAndFlush(buffer)
+            }.flatMapErrorThrowing { error in
+                logger.warning(error.localizedDescription)
+                self.connection = nil
+                if retriesLeft > 0 {
+                    Thread.sleep(forTimeInterval: Double(self.config.pushRetryInterval.nanoseconds) / 1_000_000_000)
+                    self.pushMetric(metricLine: metricLine, retriesLeft: retriesLeft - 1)
+                } else {
+                    logger.error("Couldn't send metric to StatsD, tried \(self.config.maxPushRetries) times")
+                }
             }
-        }
     }
 }

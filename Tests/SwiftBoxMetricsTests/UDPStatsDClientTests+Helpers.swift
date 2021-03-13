@@ -12,7 +12,7 @@ extension Channel {
             }
 
             XCTFail("Could not wait for reads")
-            return self.eventLoop.newSucceededFuture(result: [] as [AddressedEnvelope<ByteBuffer>])
+            return self.eventLoop.makeSucceededFuture([] as [AddressedEnvelope<ByteBuffer>])
         }.wait()
     }
 }
@@ -35,36 +35,42 @@ class DatagramReadRecorder<DataType>: ChannelInboundHandler {
     var state: State = .fresh
 
     var readWaiters: [Int: EventLoopPromise<[AddressedEnvelope<DataType>]>] = [:]
+    var readCompleteCount = 0
 
-    func channelRegistered(ctx: ChannelHandlerContext) {
+    func channelRegistered(context: ChannelHandlerContext) {
         XCTAssertEqual(.fresh, self.state)
         self.state = .registered
-        self.loop = ctx.eventLoop
+        self.loop = context.eventLoop
     }
 
-    func channelActive(ctx: ChannelHandlerContext) {
+    func channelActive(context: ChannelHandlerContext) {
         XCTAssertEqual(.registered, self.state)
         self.state = .active
     }
 
-    func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         XCTAssertEqual(.active, self.state)
         let data = self.unwrapInboundIn(data)
         reads.append(data)
 
         if let promise = readWaiters.removeValue(forKey: reads.count) {
-            promise.succeed(result: reads)
+            promise.succeed(reads)
         }
 
-        ctx.fireChannelRead(self.wrapInboundOut(data))
+        context.fireChannelRead(self.wrapInboundOut(data))
+    }
+
+    func channelReadComplete(context: ChannelHandlerContext) {
+        self.readCompleteCount += 1
+        context.fireChannelReadComplete()
     }
 
     func notifyForDatagrams(_ count: Int) -> EventLoopFuture<[AddressedEnvelope<DataType>]> {
         guard reads.count < count else {
-            return loop!.newSucceededFuture(result: .init(reads.prefix(count)))
+            return loop!.makeSucceededFuture(.init(reads.prefix(count)))
         }
 
-        readWaiters[count] = loop!.newPromise()
+        readWaiters[count] = loop!.makePromise()
         return readWaiters[count]!.futureResult
     }
 }

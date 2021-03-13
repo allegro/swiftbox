@@ -1,5 +1,5 @@
-import Logging
 import XCTest
+import Logging
 
 @testable import SwiftBoxLogging
 
@@ -16,7 +16,7 @@ class Logger2Tests: XCTestCase {
         let date = Date(timeIntervalSinceReferenceDate: 0)
         let event = Logger2Event(message: "Test", logger: "samplelogger", level: "test", file: "file", line: 1, function: "function", time: date)
 
-        let serializedEvent = try JSONDecoder().decode(Logger2Event.self, from: event.toJSON())
+        let serializedEvent = try JSONDecoder().decode(Logger2Event.self, from: event.toJSON().data(using: .utf8)!)
 
         XCTAssertEqual(event, serializedEvent)
     }
@@ -26,9 +26,18 @@ class Logger2Tests: XCTestCase {
         let loggerMessage = "message from logger"
 
         var output: String = ""
-        let logger = Logger2(loggerName, printFunction: {text in output = text})
+        let logger = LogHandler2(loggerName, printFunction: { text in output = text })
 
-        logger.info(loggerMessage)
+        logger.log(
+            level: .debug,
+            message: Logger.Message(stringLiteral: loggerMessage),
+            metadata: nil,
+            source: "",
+            file: #file,
+            function: #function,
+            line: #line
+        )
+
         XCTAssertNotNil(output)
         let logEvent = try JSONDecoder().decode(Logger2Event.self, from: output.data(using: .utf8)!)
         XCTAssertEqual(logEvent.message, loggerMessage)
@@ -40,36 +49,6 @@ class Logger2Tests: XCTestCase {
             ("testTimeShouldBeFormattedToISO8601", testTimeShouldBeFormattedToISO8601),
             ("testLogger2EventShouldDumpToJson", testLogger2EventShouldDumpToJson),
             ("testLoggerShouldPrintOnConsole", testLoggerShouldPrintOnConsole),
-        ]
-    }
-}
-
-class LoggingManagerTests: XCTestCase {
-
-    func testLoggingManagerShouldReturnLogger() throws {
-        let logger = Logging.make("test")
-        XCTAssertNotNil(logger)
-        logger.debug("test")
-    }
-
-    func testLoggingManagerBootstrapShouldOverrideDefaultHandler() throws {
-        let loggerName = "root"
-
-        Logging.bootstrap({ name in Logger2(name) })
-        defer {
-            Logging.bootstrap({ _ in PrintLogger() })
-        }
-        let logger = Logging.make(loggerName)
-
-        XCTAssertNotNil(logger)
-        logger.debug("test")
-        XCTAssertEqual((logger as! Logger2).name, loggerName)
-    }
-
-    static var allTests: [(String, (LoggingManagerTests) -> () throws -> Void)] {
-        return [
-            ("testLoggingManagerShouldReturnLogger", testLoggingManagerShouldReturnLogger),
-            ("testLoggingManagerBootstrapShouldOverrideDefaultHandler", testLoggingManagerBootstrapShouldOverrideDefaultHandler),
         ]
     }
 }
