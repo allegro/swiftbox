@@ -1,17 +1,17 @@
 FROM ubuntu:16.04 as swiftformat
 
-ARG SWIFTFORMAT_VERSION=0.40.0
+ARG SWIFTFORMAT_VERSION=0.47.12
 
 RUN set -ex \
     && apt-get update \
-    && apt-get install -y apt-transport-https zip wget software-properties-common \
-    && wget -q https://repo.vapor.codes/apt/keyring.gpg -O- | apt-key add - \
-    && echo "deb https://repo.vapor.codes/apt $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/vapor.list \
-    && apt-get update \
-    && apt-get install -y vapor \
+    && apt-get install -y apt-transport-https zip wget software-properties-common git clang libcurl3 libpython2.7 libpython2.7-dev \
+    && wget https://swift.org/builds/swift-5.0-release/ubuntu1804/swift-5.0-RELEASE/swift-5.0-RELEASE-ubuntu18.04.tar.gz \
+    && tar xzf swift-5.0-RELEASE-ubuntu18.04.tar.gz \
+    && mv swift-5.0-RELEASE-ubuntu18.04 /usr/share/swift
 
-    # swiftformat
-    && git clone -b ${SWIFTFORMAT_VERSION} --single-branch --depth 1 https://github.com/nicklockwood/SwiftFormat.git \
+ENV PATH="/usr/share/swift/usr/bin:${PATH}"
+
+RUN git clone -b ${SWIFTFORMAT_VERSION} --single-branch --depth 1 https://github.com/nicklockwood/SwiftFormat.git \
     && cd SwiftFormat \
     && swift build -c release \
     && cp .build/release/swiftformat /usr/bin/swiftformat \
