@@ -20,11 +20,11 @@ class Logger2Tests: XCTestCase {
     }
 
     func testLoggerShouldPrintOnConsole() throws {
-        let loggerName = "testLogger"
+        let loggerLabel = "testLogger"
         let loggerMessage = "message from logger"
 
         var output: String = ""
-        let logger = ElasticsearchLogHandler(loggerName, printFunction: { text in output = text })
+        let logger = ElasticsearchLogHandler(label: loggerLabel, printFunction: { text in output = text })
 
         logger.log(
             level: .debug,
@@ -39,7 +39,7 @@ class Logger2Tests: XCTestCase {
         XCTAssertNotNil(output)
         let logEvent = try JSONDecoder().decode(ElasticsearchPayload.self, from: output.data(using: .utf8)!)
         XCTAssertEqual(logEvent.message, loggerMessage)
-        XCTAssertEqual(logEvent.logger, loggerName)
+        XCTAssertEqual(logEvent.logger, loggerLabel)
     }
 
     static var allTests: [(String, (Logger2Tests) -> () throws -> Void)] {

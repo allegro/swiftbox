@@ -1,10 +1,10 @@
 
 # SwiftBox
 
-SwiftBox is a SwiftNIO based package that helps building Swift/Vapor microservices.
+SwiftBox is a SwiftNIO based package that helps building Swift/NIO-based microservices.
 
 [![Build Status](https://travis-ci.org/allegro/swiftbox.svg?branch=master)](https://travis-ci.org/allegro/swiftbox)
-![Swift 4.1](https://img.shields.io/badge/swift-5.3-brightgreen.svg)
+![Swift 5.3](https://img.shields.io/badge/swift-5.3-brightgreen.svg)
 ![Linux](https://img.shields.io/badge/linux-brightgreen.svg)
 ![MacOS](https://img.shields.io/badge/macos-brightgreen.svg)
 
@@ -23,12 +23,14 @@ Coming soon: Integration with https://github.com/apple/swift-log.
 SwiftBox Configuration allows to pass type-safe configuration such as command line, environment variables and external providers (e.g Vault) by declaring one simple struct. Configuration can be inherited from multiple sources simultaneously.
 
 Feed the configuration with:
+
 - Command line arguments: `./yourapp --config:simple=test --config:nested.number=1 --config:array.0=string`
 - Environment variables: `SIMPLE=test NESTED_NUMBER=1 ARRAY_0=string ./yourapp`
 - JSON
 - Dictionary
 
 SwiftBox Configuration supports:
+
 - overriding (source that is declared later can override previous values)
 - inheritance
 - optionals
@@ -38,13 +40,16 @@ SwiftBox Configuration supports:
 
 ### Usage
 #### 1. Import
+
 Import module:
 ```swift
 import SwiftBoxConfig
 ```
 
 #### 2. Configuration structure
+
 When you create your configuration, remember that it in order to be decoded properly, it must conform to the `Configuration` protocol.
+
 ```swift
 struct Conf: Configuration {
     let simple: String
@@ -59,8 +64,11 @@ struct Conf: Configuration {
     }
 }
 ```
+
 #### 3. Bootstrap
+
 Configuration must be bootstrapped before use. To do so, you need to conform to the `ConfigManager` protocol in the first place:
+
 ```swift
 extension Conf: ConfigManager {
     public static var configuration: Conf? = nil
@@ -68,6 +76,7 @@ extension Conf: ConfigManager {
 ```
 
 Next, call `bootstrap` method on your `ConfigManager` and pass sources you want to use:
+
 ```swift
 try Conf.bootstrap(from: [EnvSource()])
 ```
@@ -76,8 +85,10 @@ try Conf.bootstrap(from: [EnvSource()])
 
 
 #### 4. Usage
+
 After completing all the previous steps you  can finally use config in your application.
 You can access the configuration instance via `global` property:
+
 ```swift
 Conf.global.simple
 Conf.global.int
@@ -93,6 +104,7 @@ Configuration can be fed with multiple sources.
 Sources are passed into bootstrap function.
 
 If you are using multiple sources, outputs are merged (structs are merged recursively, other values are overridden):
+
 ```swift
 try Conf.bootstrap(from: [
     DictionarySource(dataSource: [
@@ -122,9 +134,11 @@ try Conf.bootstrap(from: [
 
 
 #### Dictionary source
+
 Allows reading configuration from Dictionary, may be used to specify in-code defaults for configuration.
 
 ###### Example
+
 ```swift
 try Conf.bootstrap(from: [
     DictionarySource(dataSource: [
@@ -138,9 +152,11 @@ try Conf.bootstrap(from: [
 
 
 #### JSON source
+
 Allows reading configuration from JSON data.
 
 ###### Example
+
 ```swift
 try Conf.bootstrap(from: [
     JSONSource(dataSource: "{\"test\": \"sample\"}")
@@ -149,9 +165,11 @@ try Conf.bootstrap(from: [
 
 
 #### Environment source
+
 Allows reading configuration data from environment.
 
 ###### Example
+
 ```swift
 try Conf.bootstrap(from: [
     EnvSource(prefix: "SAMPLE")
@@ -160,6 +178,7 @@ try Conf.bootstrap(from: [
 Prefix can be set for `EnvSource`, so it reads only variables which key starts with a given value.
 
 ###### Sample Configuration
+
 ```swift
 struct Conf: Configuration {
     let simple: String
@@ -176,6 +195,7 @@ struct Conf: Configuration {
 ```
 
 Above example may be populated using following env variables:
+
 ```
 SIMPLE="test"
 INT="1"
@@ -189,20 +209,26 @@ ARRAYNESTED_0_VALUE="test0"
 ARRAYNESTED_1_VALUE="test1"
 ARRAYNESTED_2_VALUE="null"
 ```
+
 **Value "null" is coerced to internal nil value**
 
 
 #### Command line source
+
 Allows reading configuration data from environment.
+
 ###### Example
+
 ```swift
 Conf.bootstrap(from: [
     CommandLineSource(prefix: "--config:my-prefix-")
 ])
 ```
+
 If a prefix is set, only arguments which start with a given value will be read. Defaults to `--config:`
 
 ###### Sample Configuration
+
 ```swift
 struct Conf: Configuration {
     let simple: String
@@ -220,6 +246,7 @@ struct Conf: Configuration {
 ```
 
 The example above may be populated using following command line arguments:
+
 ```
 --config:simple=test
 --config:int=1
@@ -233,12 +260,15 @@ The example above may be populated using following command line arguments:
 --config:arraynested.1.value=test1
 --config:arraynested.2.value=null
 ```
+
 **Value "null" is coerced to internal nil value**
 
 
 #### Custom sources
+
 To create custom sources, you need to create a class that conforms to `ConfigSource`.
 `DictionarySource` is the simplest working source that can be used as an example:
+
 ```swift
 public typealias Storage = [String: Any?]
 
@@ -256,6 +286,7 @@ public class DictionarySource: ConfigSource {
 ```
 
 ## SwiftBoxLogging
+
 Logging system for Swift.
 
 ### Usage
@@ -266,55 +297,59 @@ import SwiftBoxLogging
 ```
 
 #### 2. Bootstrap
+
 Logging should be bootstrapped before use (it defaults to `PrintLogger`).
 Bootstrap requires one parameter which is the logger factory.
-Logger factory must return `Logger` from `Console/Logging` package.
+
+Logger factory must return `LogHandler` from [swift-log](https://github.com/apple/swift-log) package.
+
 ```swift
-Logging.bootstrap({ name in Logger2(name) })
+Logging.bootstrap { label in ElasticsearchLogHandler(label: name) }
 ```
 
 #### 2. Usage
+
 Create a logger instance:
+
 ```swift
 fileprivate var logger = Logging.make(#file)
 ```
 
-Log a message:
+Log a message using one of the available protocol methods:
+
 ```swift
-logger.verbose("verbose")
-logger.debug("debug")
-logger.info("info")
-logger.warning("warning")
-logger.error("error")
-logger.fatal("fatal")
+func trace(_ message: String)
+func info(_ message: String)
+func debug(_ message: String)
+func notice(_ message: String)
+func warning(_ message: String)
+func error(_ message: String)
+func critical(_ message: String)
 ```
 
 ### Custom Loggers
-To create custom loggers your class must conform to `Logger` protocol from `Console/Logging` package.
+
+To create custom loggers your class must conform to `LoggerProtocol`.
 
 ### Vapor
-You can use same logging in Vapor and logging package:
-```swift
-private func configureLogging(_ config: inout Config, _ env: inout Environment, _ services: inout Services) {
-    /// Register Logger2
-    services.register(Logger2.self)
 
-    switch env {
-    case .production:
-        config.prefer(Logger2.self, for: Logger.self)
-        Logging.bootstrap({ name in Logger2(name) })
-    default:
-        config.prefer(PrintLogger.self, for: Logger.self)
-        Logging.bootstrap({ _ in PrintLogger() })
-    }
+You can use the same logging by overriding Vapor's default log handler:
+
+```swift
+import Logging
+
+LoggingSystem.bootstrap { label in
+    ElasticsearchLogHandler(label: label)
 }
 ```
 
 
 ## SwiftBoxMetrics
+
 StatsD and Logger handlers for official [swift-metrics](https://github.com/apple/swift-metrics) API.
 
 Supported metric types:
+
 - Counters
 - Timers
 - Gauges
@@ -322,13 +357,15 @@ Supported metric types:
 ### Usage
 
 #### 1. Import
+
 ```swift
 import Metrics
 import SwiftBoxMetrics
 ```
 
 #### 2. Bootstrap
-Metrics must be bootstrap with Handler, that conforms to `MetricsHandler` protocol:
+Metrics must be bootstraped with Handler, which conforms to `MetricsHandler` protocol:
+
 ```swift
 // StatsD Handler initialization
 MetricsSystem.bootstrap(
@@ -348,16 +385,20 @@ MetricsSystem.bootstrap(LoggerMetricsHandler())
 ```
 
 #### 3. Usage
-Detailed usage details may be found in official [swift-metrics](https://github.com/apple/swift-metrics) GitHub repository.
+
+Usage details can be found in official [swift-metrics](https://github.com/apple/swift-metrics) GitHub repository.
 
 ### Handlers
 
 #### LoggerMetricsHandler
-Default handler for metrics that prints gathered metrics to console.
+
+Default metrics handler which sends gathered metrics to its logger.
 
 #### StatsDMetricsHandler
-StatsD Metrics Handler responsible for sending gathered logs to statsD server. Supports TCP and UDP protocols.
+
+StatsD Metrics Handler is responsible for sending gathered logs to StatsD server. Supports TCP and UDP protocols.
 Metrics are sent in separate thread, so operation is non-blocking for application.
+
 ```swift
 try StatsDMetricsHandler(
     baseMetricPath: AppConfig.global.statsd.basePath!,

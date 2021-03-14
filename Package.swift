@@ -14,9 +14,9 @@ let package = Package(
         ],
         dependencies: [
                 .package(
-                        name: "vapor",
-                        url: "https://github.com/vapor/vapor.git",
-                        from: "4.0.0"
+                        name: "swift-nio-ssl",
+                        url: "https://github.com/apple/swift-nio-ssl",
+                        from: "2.8.0"
                 ),
                 .package(
                         url: "https://github.com/apple/swift-metrics.git", "1.0.0" ..< "3.0.0"
@@ -35,7 +35,7 @@ let package = Package(
                 .target(
                         name: "SwiftBoxLogging",
                         dependencies: [
-                                .product(name: "Vapor", package: "vapor"),
+                                .product(name: "NIOSSL", package: "swift-nio-ssl"),
                                 .product(name: "Logging", package: "swift-log")
                         ]
                 ),

@@ -4,17 +4,17 @@ import Logging
 public typealias PrintHandler = (String) -> Void
 
 public class ElasticsearchLogHandler: LogHandler {
-    let name: String
+    let label: String
     let printFunction: PrintHandler
 
     public var metadata: Logger.Metadata = [:]
     public var logLevel: Logger.Level = .debug
 
     public init(
-        _ name: String,
+        label: String,
         printFunction: @escaping PrintHandler = { text in print(text) }
     ) {
-        self.name = name
+        self.label = label
         self.printFunction = printFunction
     }
 
@@ -39,7 +39,7 @@ public class ElasticsearchLogHandler: LogHandler {
     ) {
         let payload = ElasticsearchPayload(
             message: message.description,
-            logger: name,
+            logger: label,
             level: level.rawValue,
             file: file,
             line: line,
