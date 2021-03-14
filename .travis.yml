@@ -6,10 +6,10 @@ language: generic
   
 jobs:
   include:
-    - name: macOS / Swift 4.2.1 (Xcode 10.1)
+    - name: macOS / Swift 5.3 (Xcode 12.2)
       os: osx
       language: swift
-      osx_image: xcode10.1
+      osx_image: xcode12.2
       script:
         - swift test
       addons:
@@ -23,7 +23,7 @@ jobs:
             - vapor
 
     - &linux
-      name: Linux / Swift 4.2.2
-      env: SWIFT_VERSION=4.2.2
+      name: Linux / Swift 5.3
+      env: SWIFT_VERSION=5.3.3
       install: eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
       script: swift test
