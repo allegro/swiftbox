@@ -5,7 +5,6 @@ import XCTest
 @testable import SwiftBoxMetrics
 
 class UDPStatsDClientTests: XCTestCase {
-
     private func buildChannel(loop: EventLoopGroup) throws -> Channel {
         return try DatagramBootstrap(group: loop)
                 .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
@@ -27,8 +26,8 @@ class UDPStatsDClientTests: XCTestCase {
 
         let client = UDPStatsDClient(
                 config: UDPConnectionConfig(
-                        host: "127.0.0.1",
-                        port: Int(channelReceiver.localAddress!.port!)
+                    host: "127.0.0.1",
+                    port: Int(channelReceiver.localAddress!.port!)
                 )
         )
 
@@ -47,7 +46,7 @@ class UDPStatsDClientTests: XCTestCase {
 
     static var allTests: [(String, (UDPStatsDClientTests) -> () throws -> Void)] {
         return [
-            ("testClientShouldPushMetrics", testClientShouldPushMetrics),
+            ("testClientShouldPushMetrics", testClientShouldPushMetrics)
         ]
     }
 }

@@ -3,9 +3,7 @@ import XCTest
 
 @testable import SwiftBoxMetrics
 
-
 class MetricTypesTests: XCTestCase {
-
     func testTimerStatsDFormat() throws {
         let metric = TimerMetric(name: "test", value: 1.001)
 
@@ -39,8 +37,7 @@ class MetricTypesTests: XCTestCase {
             ("testGaugeStatsDFormatWhenTypeIsSet", testGaugeStatsDFormatWhenTypeIsSet),
             ("testGaugeStatsDFormatWhenTypeIsIncrement", testGaugeStatsDFormatWhenTypeIsIncrement),
             ("testGaugeStatsDFormatWhenTypeIsDecrement", testGaugeStatsDFormatWhenTypeIsDecrement),
-            ("testCounterStatsDFormat", testCounterStatsDFormat),
+            ("testCounterStatsDFormat", testCounterStatsDFormat)
         ]
     }
 }
-

@@ -18,7 +18,7 @@ extension Dictionary: KeyPathReferenceable {
     public func getValue(forKeyPath keyPath: [String]) -> Any? {
         let val: Value? = self[keyPath.last! as! Key]
 
-        guard let unwrapped = self.conditionallyUnwrapDoubleOptional(val) else {
+        guard let unwrapped = conditionallyUnwrapDoubleOptional(val) else {
             return nil
         }
 

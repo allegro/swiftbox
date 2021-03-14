@@ -1,11 +1,10 @@
 #if os(Linux)
 
+@testable import SwiftBoxConfigTests
+@testable import SwiftBoxLoggingTests
+@testable import SwiftBoxMetricsTests
 import SwiftTestReporter
 import XCTest
-@testable import SwiftBoxMetricsTests
-@testable import SwiftBoxLoggingTests
-@testable import SwiftBoxConfigTests
-
 
 _ = TestObserver()
 
@@ -28,7 +27,7 @@ XCTMain([
     testCase(EnvSourceTests.allTests),
     testCase(JSONSourceTests.allTests),
     testCase(DictionarySourceTests.allTests),
-    testCase(CommandLineSourceTests.allTests),
+    testCase(CommandLineSourceTests.allTests)
 ])
 
 #endif

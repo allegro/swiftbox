@@ -5,17 +5,15 @@ import XCTest
 @testable import SwiftBoxMetrics
 
 final class TCPStatsDClientTests: XCTestCase {
-
     final class FailingHandler: ChannelOutboundHandler {
         typealias OutboundIn = ByteBuffer
         typealias OutboundOut = Never
 
-        func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
+        func write(context _: ChannelHandlerContext, data _: NIOAny, promise: EventLoopPromise<Void>?) {
             promise?.fail(ChannelError.ioOnClosedChannel)
         }
 
-        func flush(context: ChannelHandlerContext) {
-        }
+        func flush(context _: ChannelHandlerContext) {}
     }
 
     func testClientShouldPushMetrics() throws {
@@ -23,8 +21,8 @@ final class TCPStatsDClientTests: XCTestCase {
         let channel = EmbeddedChannel(loop: eventLoop)
         let client = TCPStatsDClient(
                 config: TCPConnectionConfig(
-                        host: "localhost",
-                        connectionFactory: { config in
+                    host: "localhost",
+                    connectionFactory: { _ in
                             return EventLoopFuture(
                                 eventLoop: eventLoop,
                                 value: channel,
@@ -54,13 +52,13 @@ final class TCPStatsDClientTests: XCTestCase {
 
         let connectionConfig = TCPConnectionConfig(
             host: "localhost",
-            connectionFactory: { config in
+            connectionFactory: { _ in
                 countChannelInitialization += 1
                 return EventLoopFuture(
-                        eventLoop: eventLoop,
-                        value: channel,
-                        file: #file,
-                        line: #line
+                    eventLoop: eventLoop,
+                    value: channel,
+                    file: #file,
+                    line: #line
                 )
             }
         )
@@ -79,15 +77,15 @@ final class TCPStatsDClientTests: XCTestCase {
 
         let client = TCPStatsDClient(
                 config: TCPConnectionConfig(
-                        host: "localhost",
-                        connectionTimeout: TimeAmount.milliseconds(100),
-                        connectionFactory: { config in
+                    host: "localhost",
+                    connectionTimeout: TimeAmount.milliseconds(100),
+                    connectionFactory: { _ in
                             countChannelInitialization += 1
                             return EventLoopFuture(
-                                    eventLoop: eventLoop,
-                                    error: ChannelError.ioOnClosedChannel,
-                                    file: #file,
-                                    line: #line
+                                eventLoop: eventLoop,
+                                error: ChannelError.ioOnClosedChannel,
+                                file: #file,
+                                line: #line
                             )
                         }
                 )
@@ -102,14 +100,14 @@ final class TCPStatsDClientTests: XCTestCase {
     func testClientDefaultFactoryShouldInitializeProperly() throws {
         let client = TCPStatsDClient(
                 config: TCPConnectionConfig(
-                        host: "localhost",
-                        port: 9999
+                    host: "localhost",
+                    port: 9999
                 )
         )
 
-        XCTAssertThrowsError(try client.getConnection().wait(), "Wrong exception thrown", { error in
+        XCTAssertThrowsError(try client.getConnection().wait(), "Wrong exception thrown") { error in
             XCTAssertTrue(error is NIOConnectionError)
-        })
+        }
     }
 
     static var allTests: [(String, (TCPStatsDClientTests) -> () throws -> Void)] {
@@ -117,7 +115,7 @@ final class TCPStatsDClientTests: XCTestCase {
             ("testClientShouldPushMetrics", testClientShouldPushMetrics),
             ("testClientShouldRetryWhenChannelError", testClientShouldRetryWhenChannelError),
             ("testClientShouldRetryWhenConnectionError", testClientShouldRetryWhenConnectionError),
-            ("testClientDefaultFactoryShouldInitializeProperly", testClientDefaultFactoryShouldInitializeProperly),
+            ("testClientDefaultFactoryShouldInitializeProperly", testClientDefaultFactoryShouldInitializeProperly)
         ]
     }
 }

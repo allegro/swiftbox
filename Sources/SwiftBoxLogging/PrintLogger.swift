@@ -1,5 +1,5 @@
-import Logging
 import Foundation
+import Logging
 
 public class PrintLogger: LoggerProtocol {
     public var level: Logger.Level
@@ -10,8 +10,8 @@ public class PrintLogger: LoggerProtocol {
         dateFormat: String = "yyyy-MM-dd HH:mm:ss ZZZZZ"
     ) {
         self.level = level
-        self.dateFormatter = DateFormatter()
-        self.dateFormatter.dateFormat = dateFormat
+        dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = dateFormat
     }
 
     public func debug(_ message: String) {

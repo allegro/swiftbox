@@ -31,14 +31,16 @@ class StatsDMetricsFactory: MetricsFactory {
         "\(baseMetricPath).\(label)"
     }
 
-    public func makeCounter(label: String, dimensions: [(String, String)]) -> CounterHandler {
-        self.senderFactory(getPath(label))
+    public func makeCounter(label: String, dimensions _: [(String, String)]) -> CounterHandler {
+        senderFactory(getPath(label))
     }
-    public func makeRecorder(label: String, dimensions: [(String, String)], aggregate: Bool) -> RecorderHandler {
-        self.senderFactory(getPath(label))
+
+    public func makeRecorder(label: String, dimensions _: [(String, String)], aggregate _: Bool) -> RecorderHandler {
+        senderFactory(getPath(label))
     }
-    public func makeTimer(label: String, dimensions: [(String, String)]) -> TimerHandler {
-        self.senderFactory(getPath(label))
+
+    public func makeTimer(label: String, dimensions _: [(String, String)]) -> TimerHandler {
+        senderFactory(getPath(label))
     }
 
     public func destroyCounter(_: CounterHandler) {}

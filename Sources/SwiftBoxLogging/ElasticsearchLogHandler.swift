@@ -1,5 +1,5 @@
-import Logging
 import Foundation
+import Logging
 
 public typealias PrintHandler = (String) -> Void
 
@@ -27,11 +27,12 @@ public class ElasticsearchLogHandler: LogHandler {
         }
     }
 
+    // swiftlint:disable function_parameter_count
     public func log(
         level: Logger.Level,
         message: Logger.Message,
-        metadata: Logger.Metadata?,
-        source: String,
+        metadata _: Logger.Metadata?,
+        source _: String,
         file: String,
         function: String,
         line: UInt
@@ -48,4 +49,5 @@ public class ElasticsearchLogHandler: LogHandler {
         printFunction(payload.toJSON())
         fflush(stdout)
     }
+    // swiftlint:enable function_parameter_count
 }

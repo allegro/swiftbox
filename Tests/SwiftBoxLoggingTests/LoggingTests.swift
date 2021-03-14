@@ -1,11 +1,9 @@
-import XCTest
 import Logging
+import XCTest
 
 @testable import SwiftBoxLogging
 
-
 class Logger2Tests: XCTestCase {
-
     func testTimeShouldBeFormattedToISO8601() throws {
         let date = Date(timeIntervalSinceReferenceDate: 0)
         let event = ElasticsearchPayload(message: "Test", logger: "samplelogger", level: "test", file: "file", line: 1, function: "function", time: date)
@@ -48,7 +46,7 @@ class Logger2Tests: XCTestCase {
         return [
             ("testTimeShouldBeFormattedToISO8601", testTimeShouldBeFormattedToISO8601),
             ("testLogger2EventShouldDumpToJson", testLogger2EventShouldDumpToJson),
-            ("testLoggerShouldPrintOnConsole", testLoggerShouldPrintOnConsole),
+            ("testLoggerShouldPrintOnConsole", testLoggerShouldPrintOnConsole)
         ]
     }
 }

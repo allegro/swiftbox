@@ -2,11 +2,13 @@ import XCTest
 
 @testable import SwiftBoxConfig
 
+// swiftlint:disable nesting
+
 class ConfigManagerTests: XCTestCase {
     func testManagerShouldBootstrapFromEnv() throws {
         struct SampleConfig: Decodable, ConfigManager {
-            var value: String? = nil
-            public static var configuration: SampleConfig? = nil
+            var value: String?
+            public static var configuration: SampleConfig?
         }
 
         try SampleConfig.bootstrap(from: [EnvSource(dataSource: [:])])
@@ -16,7 +18,7 @@ class ConfigManagerTests: XCTestCase {
     func testManagerShouldBootstrapFromJSON() throws {
         struct SampleConfig: Decodable, ConfigManager {
             var value: String?
-            public static var configuration: SampleConfig? = nil
+            public static var configuration: SampleConfig?
         }
         let jsonData = """
                        {"value":"test"}
@@ -32,7 +34,7 @@ class ConfigManagerTests: XCTestCase {
             var bool: Bool
             var nested: Nested
 
-            public static var configuration: SampleConfig? = nil
+            public static var configuration: SampleConfig?
 
             struct Nested: Decodable, Equatable {
                 var array: [String]
@@ -42,14 +44,14 @@ class ConfigManagerTests: XCTestCase {
         }
 
         let expectedValue = SampleConfig(
-                string: "test",
-                int: 10,
-                bool: false,
-                nested: SampleConfig.Nested(
-                        array: ["test0", "test1"],
-                        int: 11,
-                        string: "string"
-                )
+            string: "test",
+            int: 10,
+            bool: false,
+            nested: SampleConfig.Nested(
+                array: ["test0", "test1"],
+                int: 11,
+                string: "string"
+            )
         )
         let jsonData = """
                        {"string":"test","int":1}
@@ -69,7 +71,7 @@ class ConfigManagerTests: XCTestCase {
                         "NESTED_INT": "11",
                         "NESTED_ARRAY_0": "test0",
                         "NESTED_ARRAY_1": "test1",
-                        "BOOL": "0",
+                        "BOOL": "0"
                     ])
                 ]
         )
@@ -78,8 +80,8 @@ class ConfigManagerTests: XCTestCase {
 
     func testManagerShouldFailWithoutBootstrap() throws {
         struct SampleConfig: Decodable, ConfigManager {
-            var value: String? = nil
-            public static var configuration: SampleConfig? = nil
+            var value: String?
+            public static var configuration: SampleConfig?
         }
 
         XCTAssertThrowsError(try SampleConfig.getConfiguration()) { error in
@@ -94,8 +96,8 @@ class ConfigManagerTests: XCTestCase {
 
     func testManagerShouldFailOnSecondBootstrap() throws {
         struct SampleConfig: Decodable, ConfigManager {
-            var value: String? = nil
-            public static var configuration: SampleConfig? = nil
+            var value: String?
+            public static var configuration: SampleConfig?
         }
 
         try SampleConfig.bootstrap(from: [DictionarySource(dataSource: [:])])
@@ -120,8 +122,9 @@ class ConfigSourcesBootstrapTests: XCTestCase {
         var arraynested: [NestedConfig]
         var deep: NestedConfig
 
-        public static var configuration: SampleConfig? = nil
+        public static var configuration: SampleConfig?
     }
+
     struct NestedConfig: Configuration, Equatable {
         var test1: String
         var test2: String?
@@ -129,16 +132,16 @@ class ConfigSourcesBootstrapTests: XCTestCase {
     }
 
     let expected = SampleConfig(
-            test: "test",
-            int: 1,
-            null: nil,
-            missing: nil,
-            array: ["0", nil, "1"],
-            arraynested: [
-                NestedConfig(test1: "test1", test2: nil, missing: nil),
-                NestedConfig(test1: "test1", test2: "test2", missing: nil)
-            ],
-            deep: NestedConfig(test1: "test1", test2: nil, missing: nil)
+        test: "test",
+        int: 1,
+        null: nil,
+        missing: nil,
+        array: ["0", nil, "1"],
+        arraynested: [
+            NestedConfig(test1: "test1", test2: nil, missing: nil),
+            NestedConfig(test1: "test1", test2: "test2", missing: nil)
+        ],
+        deep: NestedConfig(test1: "test1", test2: nil, missing: nil)
     )
 
     override func tearDown() {
@@ -162,20 +165,19 @@ class ConfigSourcesBootstrapTests: XCTestCase {
                             [
                                 "test1": "test1",
                                 "test2": "test2"
-                            ],
+                            ]
                         ],
                         "deep": [
                             "test1": "test1",
                             "test2": nil
                         ]
                     ] as [String: Any?]
-            ),
+            )
         ]
 
         try SampleConfig.bootstrap(from: sources)
         XCTAssertEqual(SampleConfig.global, expected)
     }
-
 
     func testJSONSource() throws {
         let sources: [ConfigSource] = [
@@ -202,7 +204,7 @@ class ConfigSourcesBootstrapTests: XCTestCase {
                       }
                     }
                     """.data(using: .utf8)!
-            ),
+            )
         ]
 
         try SampleConfig.bootstrap(from: sources)
@@ -223,9 +225,9 @@ class ConfigSourcesBootstrapTests: XCTestCase {
                         "ARRAYNESTED_1_TEST1": "test1",
                         "ARRAYNESTED_1_TEST2": "test2",
                         "DEEP_TEST1": "test1",
-                        "DEEP_TEST2": "null",
+                        "DEEP_TEST2": "null"
                     ]
-            ),
+            )
         ]
 
         try SampleConfig.bootstrap(from: sources)
@@ -246,9 +248,9 @@ class ConfigSourcesBootstrapTests: XCTestCase {
                         "--config:arraynested.1.test1=test1",
                         "--config:arraynested.1.test2=test2",
                         "--config:deep.test1=test1",
-                        "--config:deep.test2=null",
+                        "--config:deep.test2=null"
                     ]
-            ),
+            )
         ]
 
         try SampleConfig.bootstrap(from: sources)
@@ -256,23 +258,21 @@ class ConfigSourcesBootstrapTests: XCTestCase {
     }
 }
 
-
 extension ConfigManagerTests {
     static let allTests = [
         ("testManagerShouldBootstrapFromEnv", testManagerShouldBootstrapFromEnv),
         ("testManagerShouldBootstrapFromJSON", testManagerShouldBootstrapFromJSON),
         ("testManagerShouldMergeMultipleSources", testManagerShouldMergeMultipleSources),
         ("testManagerShouldFailWithoutBootstrap", testManagerShouldFailWithoutBootstrap),
-        ("testManagerShouldFailOnSecondBootstrap", testManagerShouldFailOnSecondBootstrap),
+        ("testManagerShouldFailOnSecondBootstrap", testManagerShouldFailOnSecondBootstrap)
     ]
 }
-
 
 extension ConfigSourcesBootstrapTests {
     static let allTests = [
         ("testDictSource", testDictSource),
         ("testJSONSource", testJSONSource),
         ("testEnvSource", testEnvSource),
-        ("testCommandLineSource", testCommandLineSource),
+        ("testCommandLineSource", testCommandLineSource)
     ]
 }

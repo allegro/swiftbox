@@ -6,7 +6,7 @@ import NIO
 /// Copied from /NIOTests/DatagramChannelTests.swift
 extension Channel {
     func waitForDatagrams(count: Int) throws -> [AddressedEnvelope<ByteBuffer>] {
-        return try self.pipeline.context(handlerType: DatagramReadRecorder<ByteBuffer>.self).flatMap { context in
+        return try pipeline.context(handlerType: DatagramReadRecorder<ByteBuffer>.self).flatMap { context in
             if let future = (context.handler as? DatagramReadRecorder<ByteBuffer>)?.notifyForDatagrams(count) {
                 return future
             }
@@ -31,37 +31,37 @@ class DatagramReadRecorder<DataType>: ChannelInboundHandler {
     }
 
     var reads: [AddressedEnvelope<DataType>] = []
-    var loop: EventLoop? = nil
+    var loop: EventLoop?
     var state: State = .fresh
 
     var readWaiters: [Int: EventLoopPromise<[AddressedEnvelope<DataType>]>] = [:]
     var readCompleteCount = 0
 
     func channelRegistered(context: ChannelHandlerContext) {
-        XCTAssertEqual(.fresh, self.state)
-        self.state = .registered
-        self.loop = context.eventLoop
+        XCTAssertEqual(.fresh, state)
+        state = .registered
+        loop = context.eventLoop
     }
 
-    func channelActive(context: ChannelHandlerContext) {
-        XCTAssertEqual(.registered, self.state)
-        self.state = .active
+    func channelActive(context _: ChannelHandlerContext) {
+        XCTAssertEqual(.registered, state)
+        state = .active
     }
 
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {
-        XCTAssertEqual(.active, self.state)
-        let data = self.unwrapInboundIn(data)
+        XCTAssertEqual(.active, state)
+        let data = unwrapInboundIn(data)
         reads.append(data)
 
         if let promise = readWaiters.removeValue(forKey: reads.count) {
             promise.succeed(reads)
         }
 
-        context.fireChannelRead(self.wrapInboundOut(data))
+        context.fireChannelRead(wrapInboundOut(data))
     }
 
     func channelReadComplete(context: ChannelHandlerContext) {
-        self.readCompleteCount += 1
+        readCompleteCount += 1
         context.fireChannelReadComplete()
     }
 
