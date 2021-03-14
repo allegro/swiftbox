@@ -8,15 +8,15 @@ class Logger2Tests: XCTestCase {
 
     func testTimeShouldBeFormattedToISO8601() throws {
         let date = Date(timeIntervalSinceReferenceDate: 0)
-        let event = Logger2Event(message: "Test", logger: "samplelogger", level: "test", file: "file", line: 1, function: "function", time: date)
+        let event = ElasticsearchPayload(message: "Test", logger: "samplelogger", level: "test", file: "file", line: 1, function: "function", time: date)
         XCTAssertEqual(event.time, "2001-01-01T00:00:00.000Z")
     }
 
     func testLogger2EventShouldDumpToJson() throws {
         let date = Date(timeIntervalSinceReferenceDate: 0)
-        let event = Logger2Event(message: "Test", logger: "samplelogger", level: "test", file: "file", line: 1, function: "function", time: date)
+        let event = ElasticsearchPayload(message: "Test", logger: "samplelogger", level: "test", file: "file", line: 1, function: "function", time: date)
 
-        let serializedEvent = try JSONDecoder().decode(Logger2Event.self, from: event.toJSON().data(using: .utf8)!)
+        let serializedEvent = try JSONDecoder().decode(ElasticsearchPayload.self, from: event.toJSON().data(using: .utf8)!)
 
         XCTAssertEqual(event, serializedEvent)
     }
@@ -26,7 +26,7 @@ class Logger2Tests: XCTestCase {
         let loggerMessage = "message from logger"
 
         var output: String = ""
-        let logger = LogHandler2(loggerName, printFunction: { text in output = text })
+        let logger = ElasticsearchLogHandler(loggerName, printFunction: { text in output = text })
 
         logger.log(
             level: .debug,
@@ -39,7 +39,7 @@ class Logger2Tests: XCTestCase {
         )
 
         XCTAssertNotNil(output)
-        let logEvent = try JSONDecoder().decode(Logger2Event.self, from: output.data(using: .utf8)!)
+        let logEvent = try JSONDecoder().decode(ElasticsearchPayload.self, from: output.data(using: .utf8)!)
         XCTAssertEqual(logEvent.message, loggerMessage)
         XCTAssertEqual(logEvent.logger, loggerName)
     }

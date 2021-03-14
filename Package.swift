@@ -19,8 +19,7 @@ let package = Package(
                 from: "4.0.0"
             ),
             .package(
-                url: "https://github.com/apple/swift-metrics.git",
-                "1.0.0" ..< "3.0.0"
+                url: "https://github.com/apple/swift-metrics.git", "1.0.0" ..< "3.0.0"
             ),
             .package(
                 url: "https://github.com/apple/swift-log.git",

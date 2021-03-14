@@ -1,5 +1,4 @@
 import Logging
-import Vapor
 
 public enum Logging {
     private static var factory: (String) -> LoggerProtocol = { _ in
