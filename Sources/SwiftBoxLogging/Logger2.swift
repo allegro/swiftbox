@@ -104,7 +104,7 @@ struct Logger2Event: Codable {
 
 extension Logger2Event: Equatable {}
 
-let logTimeFormatter: DateFormatter = {
+fileprivate let logTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.calendar = Calendar(identifier: .iso8601)
     formatter.locale = Locale(identifier: "en_US_POSIX")

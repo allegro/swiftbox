@@ -68,8 +68,8 @@ public class UDPStatsDClient: StatsDClientProtocol {
     /// Gets connection and writes metrics in time format to opened socket channel.
     public func pushMetric(metricLine: String) {
         // TODO(Blejwi): Send with batches
-        _ = getConnection()
-            .map { channel in
+        getConnection()
+            .flatMap { channel -> EventLoopFuture<Void> in
                 logger.debug("\(channel)")
                 logger.debug("Sending line: \"\(metricLine)\"")
 
@@ -82,8 +82,8 @@ public class UDPStatsDClient: StatsDClientProtocol {
                 buffer.writeString(line)
 
                 let envelope = AddressedEnvelope(remoteAddress: remoteAddr, data: buffer)
-                channel.writeAndFlush(envelope, promise: nil)
-            }.flatMapErrorThrowing { error in
+                return channel.writeAndFlush(envelope)
+            }.whenFailure { error in
                 logger.warning(error.localizedDescription)
                 logger.warning(String(describing: error))
             }

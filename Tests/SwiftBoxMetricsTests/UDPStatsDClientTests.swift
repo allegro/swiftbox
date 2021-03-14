@@ -24,8 +24,7 @@ class UDPStatsDClientTests: XCTestCase {
 
         let channelSender = try buildChannel(loop: eventLoop)
         let channelReceiver = try buildChannel(loop: eventLoop)
-        print(Int(channelReceiver.localAddress!.port!))
-        print(Int(channelSender.localAddress!.port!))
+
         let client = UDPStatsDClient(
                 config: UDPConnectionConfig(
                         host: "127.0.0.1",

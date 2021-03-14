@@ -6,42 +6,50 @@ import XCTest
 
 final class TCPStatsDClientTests: XCTestCase {
 
-//    func testClientShouldPushMetrics() throws {
-//        let eventLoop = EmbeddedEventLoop()
-//        let channel = EmbeddedChannel(loop: eventLoop)
-//        let client = TCPStatsDClient(
-//                config: TCPConnectionConfig(
-//                        host: "localhost",
-//                        connectionFactory: { config in
-//                            return EventLoopFuture(
-//                                    eventLoop: eventLoop,
-//                                    value: channel,
-//                                    file: #file,
-//                                    line: #line
-//                            )
-//                        }
-//                )
-//        )
-//
-//        client.pushMetric(metricLine: "test:1|ms")
-//
-//        if case .some(.byteBuffer(let buffer)) = channel.readOutbound() {
-//            let data = buffer.getString(at: 0, length: buffer.readableBytes)!
-//            XCTAssertEqual(data, "test:1|ms\n")
-//        } else {
-//            XCTFail("Got invalid type from channel data")
-//        }
-//    }
+    final class FailingHandler: ChannelOutboundHandler {
+        typealias OutboundIn = ByteBuffer
+        typealias OutboundOut = Never
 
-    class FailingHandler: _ChannelOutboundHandler {
-        func write(ctx: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
+        func write(context: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
             promise?.fail(ChannelError.ioOnClosedChannel)
+        }
+
+        func flush(context: ChannelHandlerContext) {
+        }
+    }
+
+    func testClientShouldPushMetrics() throws {
+        let eventLoop = EmbeddedEventLoop()
+        let channel = EmbeddedChannel(loop: eventLoop)
+        let client = TCPStatsDClient(
+                config: TCPConnectionConfig(
+                        host: "localhost",
+                        connectionFactory: { config in
+                            return EventLoopFuture(
+                                eventLoop: eventLoop,
+                                value: channel,
+                                file: #file,
+                                line: #line
+                            )
+                        }
+                )
+        )
+
+        client.pushMetric(metricLine: "test:1|ms")
+
+        if let buffer = try channel.readOutbound(as: ByteBuffer.self) {
+            let data = buffer.getString(at: 0, length: buffer.readableBytes)!
+            XCTAssertEqual(data, "test:1|ms\n")
+        } else {
+            XCTFail("Got invalid type from channel data")
         }
     }
 
     func testClientShouldRetryWhenChannelError() throws {
         let eventLoop = EmbeddedEventLoop()
-        let channel = EmbeddedChannel(handler: FailingHandler(), loop: eventLoop)
+        let channel = EmbeddedChannel(loop: eventLoop)
+        try channel.pipeline.addHandler(FailingHandler(), position: .first).wait()
+
         var countChannelInitialization = 0
 
         let connectionConfig = TCPConnectionConfig(
@@ -106,7 +114,7 @@ final class TCPStatsDClientTests: XCTestCase {
 
     static var allTests: [(String, (TCPStatsDClientTests) -> () throws -> Void)] {
         return [
-            //("testClientShouldPushMetrics", testClientShouldPushMetrics),
+            ("testClientShouldPushMetrics", testClientShouldPushMetrics),
             ("testClientShouldRetryWhenChannelError", testClientShouldRetryWhenChannelError),
             ("testClientShouldRetryWhenConnectionError", testClientShouldRetryWhenConnectionError),
             ("testClientDefaultFactoryShouldInitializeProperly", testClientDefaultFactoryShouldInitializeProperly),

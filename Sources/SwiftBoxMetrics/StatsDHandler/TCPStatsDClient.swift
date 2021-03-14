@@ -91,13 +91,13 @@ public class TCPStatsDClient: StatsDClientProtocol {
     public func pushMetric(metricLine: String, retriesLeft: Int) {
         // TODO(Blejwi): Send with batches
         getConnection()
-            .map { channel in
+            .flatMap { channel -> EventLoopFuture<Void> in
                 logger.debug("Sending line: \"\(metricLine)\", retries left: \(retriesLeft)")
                 let line = metricLine + "\n"
                 var buffer = channel.allocator.buffer(capacity: line.utf8.count)
                 buffer.writeString(line)
-                channel.writeAndFlush(buffer)
-            }.flatMapErrorThrowing { error in
+                return channel.writeAndFlush(buffer)
+            }.whenFailure { error in
                 logger.warning(error.localizedDescription)
                 self.connection = nil
                 if retriesLeft > 0 {

@@ -6,7 +6,7 @@ import NIO
 /// Copied from /NIOTests/DatagramChannelTests.swift
 extension Channel {
     func waitForDatagrams(count: Int) throws -> [AddressedEnvelope<ByteBuffer>] {
-        return try self.pipeline.context(name: "ByteReadRecorder").flatMap { context in
+        return try self.pipeline.context(handlerType: DatagramReadRecorder<ByteBuffer>.self).flatMap { context in
             if let future = (context.handler as? DatagramReadRecorder<ByteBuffer>)?.notifyForDatagrams(count) {
                 return future
             }

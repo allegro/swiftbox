@@ -18,7 +18,10 @@ let package = Package(
                 url: "https://github.com/vapor/vapor.git",
                 from: "4.0.0"
             ),
-            .package(url: "https://github.com/apple/swift-metrics.git", "1.0.0" ..< "3.0.0"),
+            .package(
+                url: "https://github.com/apple/swift-metrics.git",
+                "1.0.0" ..< "3.0.0"
+            ),
             .package(
                 url: "https://github.com/apple/swift-log.git",
                 from: "1.0.0"
