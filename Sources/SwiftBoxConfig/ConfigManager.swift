@@ -2,7 +2,7 @@ import Foundation
 
 import SwiftBoxLogging
 
-private var logger = Logging.make(#file)
+private let logger = Logging.make(#file)
 
 /// Config Manager protocol that Application Configuration Manager must conform to.
 ///

@@ -1,6 +1,8 @@
 import Logging
 import Foundation
 
+public typealias PrintHandler = (String) -> Void
+
 public class ElasticsearchLogHandler: LogHandler {
     let name: String
     let printFunction: PrintHandler
@@ -16,22 +18,24 @@ public class ElasticsearchLogHandler: LogHandler {
         self.printFunction = printFunction
     }
 
-    public subscript(metadataKey _: String) -> Logger.Metadata.Value? {
+    public subscript(metadataKey key: String) -> Logger.Metadata.Value? {
         get {
-            nil
+            return metadata[key]
         }
-        set(newValue) {
-
+        set {
+            metadata[key] = newValue
         }
     }
 
-    public func log(level: Logger.Level,
-             message: Logger.Message,
-             metadata: Logger.Metadata?,
-             source: String,
-             file: String,
-             function: String,
-             line: UInt) {
+    public func log(
+        level: Logger.Level,
+        message: Logger.Message,
+        metadata: Logger.Metadata?,
+        source: String,
+        file: String,
+        function: String,
+        line: UInt
+    ) {
         let payload = ElasticsearchPayload(
             message: message.description,
             logger: name,
@@ -40,6 +44,7 @@ public class ElasticsearchLogHandler: LogHandler {
             line: line,
             function: function
         )
+
         printFunction(payload.toJSON())
         fflush(stdout)
     }

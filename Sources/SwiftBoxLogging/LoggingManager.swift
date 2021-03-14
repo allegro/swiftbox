@@ -10,6 +10,6 @@ public enum Logging {
     }
 
     public static func make(_ label: String) -> LoggerProtocol {
-        return factory(label)
+        factory(label)
     }
 }

@@ -1,13 +1,13 @@
 import Foundation
 
 struct ElasticsearchPayload: Codable {
-    var message: String
-    var logger: String
-    var level: String
-    var file: String
-    var line: UInt
-    var function: String
-    var time: String
+    let message: String
+    let logger: String
+    let level: String
+    let file: String
+    let line: UInt
+    let function: String
+    let time: String
 
     enum CodingKeys: String, CodingKey {
         case time = "@timestamp"
@@ -19,7 +19,15 @@ struct ElasticsearchPayload: Codable {
         case function
     }
 
-    init(message: String, logger: String, level: String, file: String, line: UInt, function: String, time: Date = Date()) {
+    init(
+        message: String,
+        logger: String,
+        level: String,
+        file: String,
+        line: UInt,
+        function: String,
+        time: Date = Date()
+    ) {
         self.message = message
         self.logger = logger
         self.level = level

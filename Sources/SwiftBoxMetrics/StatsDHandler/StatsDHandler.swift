@@ -14,7 +14,7 @@ public final class StatsDMetricsHandler: BaseMetricsHandler {
     }
 
     public func getMetricPath() -> String {
-        return self.path
+        path
     }
 
     public func sendMetric(metric: StatsDMetric) {
