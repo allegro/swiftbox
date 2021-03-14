@@ -69,12 +69,11 @@ public class UDPStatsDClient: StatsDClientProtocol {
     public func pushMetric(metricLine: String) {
         // TODO(Blejwi): Send with batches
         getConnection()
-            .flatMap { channel -> EventLoopFuture<Void> in
+            .flatMapThrowing { channel -> EventLoopFuture<Void> in
                 logger.debug("\(channel)")
                 logger.debug("Sending line: \"\(metricLine)\"")
 
-                // TODO: Fix
-                let remoteAddr = try! SocketAddress.makeAddressResolvingHost(self.config.host, port: self.config.port)
+                let remoteAddr = try SocketAddress.makeAddressResolvingHost(self.config.host, port: self.config.port)
                 logger.debug("\(remoteAddr)")
 
                 let line = metricLine + "\n"
