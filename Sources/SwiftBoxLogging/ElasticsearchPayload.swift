@@ -45,7 +45,7 @@ struct ElasticsearchPayload: Codable {
 
 extension ElasticsearchPayload: Equatable {}
 
-fileprivate let logTimeFormatter: DateFormatter = {
+private let logTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.calendar = Calendar(identifier: .iso8601)
     formatter.locale = Locale(identifier: "en_US_POSIX")

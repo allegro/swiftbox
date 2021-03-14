@@ -24,7 +24,7 @@ class StatsDMetricsFactory: MetricsFactory {
     }
 
     internal static func validateBasePath(_ path: String) -> Bool {
-        basePathTest.matches(in: path, range: NSMakeRange(0, path.utf8.count)).count > 0
+        basePathTest.matches(in: path, range: NSRange(location: 0, length: path.utf8.count)).count > 0
     }
 
     internal func getPath(_ label: String) -> String {

@@ -9,14 +9,16 @@ public protocol BaseMetricsHandler: MetricsHandler {
 }
 
 extension BaseMetricsHandler {
-    public func increment(by: Int64) {
-        self.sendMetric(metric: CounterMetric(name: self.getMetricPath(), value: by))
+    public func increment(by value: Int64) {
+        self.sendMetric(metric: CounterMetric(name: self.getMetricPath(), value: value))
     }
+
     public func reset() {}
 
     public func record(_ value: Int64) {
         self.record(Double(value))
     }
+
     public func record(_ value: Double) {
         self.sendMetric(metric: GaugeMetric(name: self.getMetricPath(), value: value, type: .set))
     }
