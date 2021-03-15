@@ -32,8 +32,8 @@ class EnvSourceTests: XCTestCase {
 
         let result = try EnvSource(dataSource: data, prefix: "nested").getConfig()
 
-        XCTAssertNil(result["string"])
-        XCTAssertNil(result["int"])
+        XCTAssertTrue(result["string"] == nil)
+        XCTAssertTrue(result["int"] == nil)
 
         XCTAssertEqual(result["test"] as! String, "test")
         XCTAssertEqual(result[keyPath: "test"] as! String, "test")
