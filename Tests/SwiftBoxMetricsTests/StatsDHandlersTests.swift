@@ -1,17 +1,16 @@
 import Foundation
 import XCTest
 
-@testable import NIO
 @testable import Metrics
+@testable import NIO
 @testable import SwiftBoxMetrics
 
 class StatsDHandlerTests: XCTestCase {
-
     class FakeStatsDClient: StatsDClientProtocol {
-        public var gatheredMetrics: Array<String> = []
+        public var gatheredMetrics: [String] = []
 
         func pushMetric(metricLine: String) {
-            self.gatheredMetrics.append(metricLine)
+            gatheredMetrics.append(metricLine)
         }
     }
 
@@ -89,7 +88,7 @@ class StatsDHandlerTests: XCTestCase {
             ("testHandlerShouldGatherRecorderMetrics", testHandlerShouldGatherRecorderMetrics),
             ("testHandlerShouldGatherCounterMetrics", testHandlerShouldGatherCounterMetrics),
             ("testHandlerShouldValidateBasePath", testHandlerShouldValidateBasePath),
-            ("testHandlerShouldThrowWhenBasePathIsWrong", testHandlerShouldThrowWhenBasePathIsWrong),
+            ("testHandlerShouldThrowWhenBasePathIsWrong", testHandlerShouldThrowWhenBasePathIsWrong)
         ]
     }
 }

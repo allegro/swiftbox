@@ -10,7 +10,7 @@ class EnvSourceTests: XCTestCase {
             "INT": "INT",
             "NESTED_TEST": "test",
             "NESTED_DEEP_ARRAY_0": "0",
-            "NESTED_DEEP_ARRAY_1": "1",
+            "NESTED_DEEP_ARRAY_1": "1"
         ]
 
         let result = try EnvSource(dataSource: data).getConfig()
@@ -27,13 +27,13 @@ class EnvSourceTests: XCTestCase {
             "INT": "INT",
             "NESTED_TEST": "test",
             "NESTED_DEEP_ARRAY_0": "0",
-            "NESTED_DEEP_ARRAY_1": "1",
+            "NESTED_DEEP_ARRAY_1": "1"
         ]
 
         let result = try EnvSource(dataSource: data, prefix: "nested").getConfig()
 
-        XCTAssertNil(result["string"])
-        XCTAssertNil(result["int"])
+        XCTAssertTrue(result["string"] == nil)
+        XCTAssertTrue(result["int"] == nil)
 
         XCTAssertEqual(result["test"] as! String, "test")
         XCTAssertEqual(result[keyPath: "test"] as! String, "test")
@@ -95,7 +95,7 @@ class CommandLineSourceTests: XCTestCase {
             "--config:array.1=2",
             "--config:deep.test=test",
             "--port=0",
-            "--test=11",
+            "--test=11"
         ]
 
         let result = try CommandLineSource(dataSource: data).getConfig()
@@ -110,7 +110,7 @@ class CommandLineSourceTests: XCTestCase {
             "--custom:test=test",
             "--custom:array.0=1",
             "--config:array.1=2",
-            "--config:deep.test=test",
+            "--config:deep.test=test"
         ]
 
         let result = try CommandLineSource(dataSource: data, prefix: "--custom:").getConfig()
@@ -125,16 +125,16 @@ class CommandLineSourceTests: XCTestCase {
             "--custom:test=test",
             "--custom:array.0=1",
             "--config:array.1=2",
-            "--config:deep.test=test",
+            "--config:deep.test=test"
         ]
 
         let result = CommandLineSource.filterArguments(data)
         XCTAssertEqual(
-                result,
-                [
-                    "--config:array.1=2",
-                    "--config:deep.test=test",
-                ]
+            result,
+            [
+                "--config:array.1=2",
+                "--config:deep.test=test"
+            ]
         )
     }
 
@@ -143,16 +143,16 @@ class CommandLineSourceTests: XCTestCase {
             "--custom:test=test",
             "--custom:array.0=1",
             "--config:array.1=2",
-            "--config:deep.test=test",
+            "--config:deep.test=test"
         ]
 
         let result = CommandLineSource.filterArguments(data, exclude: true)
         XCTAssertEqual(
-                result,
-                [
-                    "--custom:test=test",
-                    "--custom:array.0=1",
-                ]
+            result,
+            [
+                "--custom:test=test",
+                "--custom:array.0=1"
+            ]
         )
     }
 
@@ -161,16 +161,16 @@ class CommandLineSourceTests: XCTestCase {
             "--custom:test=test",
             "--custom:array.0=1",
             "--config:array.1=2",
-            "--config:deep.test=test",
+            "--config:deep.test=test"
         ]
 
         let result = CommandLineSource.filterArguments(data, by: "--custom:")
         XCTAssertEqual(
-                result,
-                [
-                    "--custom:test=test",
-                    "--custom:array.0=1",
-                ]
+            result,
+            [
+                "--custom:test=test",
+                "--custom:array.0=1"
+            ]
         )
     }
 
@@ -178,7 +178,7 @@ class CommandLineSourceTests: XCTestCase {
         let data = [
             "--config:test.0=test",
             "--config:test.1=test=test=",
-            "--config:test.2=test=test=test",
+            "--config:test.2=test=test=test"
         ]
 
         let result = try CommandLineSource(dataSource: data).getConfig()
@@ -187,24 +187,24 @@ class CommandLineSourceTests: XCTestCase {
     }
 }
 
-
 // MARK: Manifest
+
 extension EnvSourceTests {
     static let allTests = [
         ("testEnvShouldBeParsedProperly", testEnvShouldBeParsedProperly),
-        ("testPrefixShouldBeUsedToLimitEnvVariables", testPrefixShouldBeUsedToLimitEnvVariables),
+        ("testPrefixShouldBeUsedToLimitEnvVariables", testPrefixShouldBeUsedToLimitEnvVariables)
     ]
 }
 
 extension JSONSourceTests {
     static let allTests = [
-        ("testConfigShouldBeParsedProperly", testConfigShouldBeParsedProperly),
+        ("testConfigShouldBeParsedProperly", testConfigShouldBeParsedProperly)
     ]
 }
 
 extension DictionarySourceTests {
     static let allTests = [
-        ("testConfigShouldBeParsedProperly", testConfigShouldBeParsedProperly),
+        ("testConfigShouldBeParsedProperly", testConfigShouldBeParsedProperly)
     ]
 }
 
@@ -215,7 +215,6 @@ extension CommandLineSourceTests {
         ("testFilterByPrefixShouldInclude", testFilterByPrefixShouldInclude),
         ("testFilterByPrefixShouldExclude", testFilterByPrefixShouldExclude),
         ("testFilterByCustomPrefix", testFilterByCustomPrefix),
-        ("testDoubleEquationShouldBeParsed", testDoubleEquationShouldBeParsed),
+        ("testDoubleEquationShouldBeParsed", testDoubleEquationShouldBeParsed)
     ]
 }
-

@@ -50,20 +50,19 @@ public class EnvSource: ConfigSource {
     }
 
     private func filterByPrefix(data: Storage, prefix: String?) -> Storage {
-        if let prefix = prefix {
-            let _prefix = prefix.lowercased() + String(separator)
-            let filteredData = data.filter { key, _ in
-                key.lowercased().starts(with: _prefix)
-            }
-            return Dictionary(
-                    uniqueKeysWithValues: filteredData.map { key, value in
-                        let newKey = key.lowercased().replacingOccurrences(of: _prefix, with: "")
-                        return (newKey, value)
-                    }
-            )
+        guard let prefix = prefix else { return data }
+
+        let filter = prefix.lowercased() + String(separator)
+        let filteredData = data.filter { key, _ in
+            key.lowercased().starts(with: filter)
         }
 
-        return data
+        return Dictionary(
+            uniqueKeysWithValues: filteredData.map { key, value in
+                let newKey = key.lowercased().replacingOccurrences(of: filter, with: "")
+                return (newKey, value)
+            }
+        )
     }
 }
 

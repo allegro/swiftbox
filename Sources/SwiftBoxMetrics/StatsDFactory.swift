@@ -24,21 +24,23 @@ class StatsDMetricsFactory: MetricsFactory {
     }
 
     internal static func validateBasePath(_ path: String) -> Bool {
-        return basePathTest.matches(in: path, range: NSMakeRange(0, path.utf8.count)).count > 0
+        basePathTest.matches(in: path, range: NSRange(location: 0, length: path.utf8.count)).count > 0
     }
 
     internal func getPath(_ label: String) -> String {
-        return "\(baseMetricPath).\(label)"
+        "\(baseMetricPath).\(label)"
     }
 
-    public func makeCounter(label: String, dimensions: [(String, String)]) -> CounterHandler {
-        return self.senderFactory(getPath(label))
+    public func makeCounter(label: String, dimensions _: [(String, String)]) -> CounterHandler {
+        senderFactory(getPath(label))
     }
-    public func makeRecorder(label: String, dimensions: [(String, String)], aggregate: Bool) -> RecorderHandler {
-        return self.senderFactory(getPath(label))
+
+    public func makeRecorder(label: String, dimensions _: [(String, String)], aggregate _: Bool) -> RecorderHandler {
+        senderFactory(getPath(label))
     }
-    public func makeTimer(label: String, dimensions: [(String, String)]) -> TimerHandler {
-        return self.senderFactory(getPath(label))
+
+    public func makeTimer(label: String, dimensions _: [(String, String)]) -> TimerHandler {
+        senderFactory(getPath(label))
     }
 
     public func destroyCounter(_: CounterHandler) {}

@@ -7,7 +7,7 @@ public struct TimerMetric: StatsDMetric {
     let value: Double
 
     public func getStatsDLine() -> String {
-        return "\(name):\(value)|ms"
+        "\(name):\(value)|ms"
     }
 }
 
@@ -16,7 +16,7 @@ public struct CounterMetric: StatsDMetric {
     let value: Int64
 
     public func getStatsDLine() -> String {
-        return "\(name):\(value)|c"
+        "\(name):\(value)|c"
     }
 }
 
@@ -32,6 +32,6 @@ public struct GaugeMetric: StatsDMetric {
     }
 
     public func getStatsDLine() -> String {
-        return "\(name):\(type.rawValue)\(value)|g"
+        "\(name):\(type.rawValue)\(value)|g"
     }
 }

@@ -1,4 +1,3 @@
-import Core
 import Foundation
 
 import SwiftBoxLogging
@@ -59,7 +58,7 @@ private struct DictionarySingleValueDecoder: SingleValueDecodingContainer {
 
     public func decodeNil() -> Bool {
         let keyPath = toStringKeyPath(codingPath)
-        guard let value = self.storage[keyPath: keyPath] else {
+        guard let value = storage[keyPath: keyPath] else {
             return true
         }
         if case Optional<Any>.none = value {
@@ -80,26 +79,26 @@ private struct DictionarySingleValueDecoder: SingleValueDecodingContainer {
         }
     }
 
-    private func unbox<To>(value: Any?, to: To.Type) throws -> To {
+    private func unbox<To>(value: Any?, to destinationType: To.Type) throws -> To {
         guard let value = value else {
-            throw DecoderError.castError("Cannot cast nil to \(to)")
+            throw DecoderError.castError("Cannot cast nil to \(destinationType)")
         }
 
-        if to.self is Bool.Type, let value = value as? Bool {
+        if destinationType.self is Bool.Type, let value = value as? Bool {
             return value as! To
-        } else if to.self is String.Type, let value = value as? String {
+        } else if destinationType.self is String.Type, let value = value as? String {
             return value as! To
-        } else if to.self is Int.Type, let value = value as? Int {
+        } else if destinationType.self is Int.Type, let value = value as? Int {
             return value as! To
-        } else if to.self is Double.Type, let value = value as? Double {
+        } else if destinationType.self is Double.Type, let value = value as? Double {
             return value as! To
-        } else if to.self is Float.Type, let value = value as? Float {
+        } else if destinationType.self is Float.Type, let value = value as? Float {
             return value as! To
         } else if let value = value as? String {
-            return try unbox(value: value, to: to)
+            return try unbox(value: value, to: destinationType)
         } else {
             guard let castValue = value as? To else {
-                throw DecoderError.castError("Cannot cast \(value) to \(to)")
+                throw DecoderError.castError("Cannot cast \(value) to \(destinationType)")
             }
 
             return castValue
@@ -170,7 +169,7 @@ private struct DictionaryKeyedDecoder<K>: KeyedDecodingContainerProtocol where K
     func decodeNil(forKey key: K) throws -> Bool {
         let keyPath = toStringKeyPath(codingPath + [key])
 
-        guard let value = self.storage[keyPath: keyPath] else {
+        guard let value = storage[keyPath: keyPath] else {
             return true
         }
         if case Optional<Any>.none = value {

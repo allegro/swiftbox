@@ -26,7 +26,7 @@ extension Array: KeyPathReferenceable {
         }
         let value = self[key]
 
-        guard let unwrapped = self.conditionallyUnwrapDoubleOptional(value) else {
+        guard let unwrapped = conditionallyUnwrapDoubleOptional(value) else {
             return nil
         }
 

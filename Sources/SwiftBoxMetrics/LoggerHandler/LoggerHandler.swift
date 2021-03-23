@@ -2,7 +2,7 @@ import Foundation
 import Metrics
 import SwiftBoxLogging
 
-private var logger = Logging.make("Metrics")
+private let logger = Logging.make("Metrics")
 
 public final class LoggerMetricsHandler: BaseMetricsHandler {
     private let path: String
@@ -12,7 +12,7 @@ public final class LoggerMetricsHandler: BaseMetricsHandler {
     }
 
     public func getMetricPath() -> String {
-        return self.path
+        path
     }
 
     public func sendMetric(metric: StatsDMetric) {

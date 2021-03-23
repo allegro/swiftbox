@@ -23,7 +23,7 @@ class FlatDictParserTests: XCTestCase {
             "NESTED_ARRAYOBJ_1_TEST2": "test4",
             "NESTED_ARRAYOBJ_1_TEST3": "null",
 
-            "OTHER_ARGUMENT": "0",
+            "OTHER_ARGUMENT": "0"
         ]
 
         let result = try FlatDictConfigParser(data: data, separator: "_").decode()
@@ -31,34 +31,34 @@ class FlatDictParserTests: XCTestCase {
         XCTAssertEqual(result["int"] as! String, "111")
         XCTAssertEqual(result["string"] as! String, "string")
         XCTAssertNil(result["null"]!)
-        XCTAssertEqual((result["other"] as! Dictionary<String, String>)["argument"], "0")
-        XCTAssertEqual((result["other"] as! Dictionary<String, String>)["argument"], "0")
+        XCTAssertEqual((result["other"] as! [String: String])["argument"], "0")
+        XCTAssertEqual((result["other"] as! [String: String])["argument"], "0")
         XCTAssertEqual(
-                (result["nested"] as! Dictionary<String, Any>)["arraystring"] as! Array<String?>,
-                ["arraystring0", "arraystring1", nil]
+            (result["nested"] as! [String: Any])["arraystring"] as! [String?],
+            ["arraystring0", "arraystring1", nil]
         )
         XCTAssertEqual(
-                (result["nested"] as! Dictionary<String, Any>)["deep"] as! Dictionary<String, String>,
-                [
-                    "bool1": "true",
-                    "bool2": "1",
-                    "bool3": "0",
-                    "bool4": "false",
-                ]
+            (result["nested"] as! [String: Any])["deep"] as! [String: String],
+            [
+                "bool1": "true",
+                "bool2": "1",
+                "bool3": "0",
+                "bool4": "false"
+            ]
         )
         XCTAssertEqual(
-                (result["nested"] as! Dictionary<String, Any>)["arrayobj"] as! Array<Dictionary<String, String?>>,
+            (result["nested"] as! [String: Any])["arrayobj"] as! [[String: String?]],
+            [
                 [
-                    [
-                        "test1": "test1",
-                        "test2": "test2",
-                    ],
-                    [
-                        "test1": "test3",
-                        "test2": "test4",
-                        "test3": nil,
-                    ]
+                    "test1": "test1",
+                    "test2": "test2"
+                ],
+                [
+                    "test1": "test3",
+                    "test2": "test4",
+                    "test3": nil
                 ]
+            ]
         )
     }
 
@@ -71,7 +71,7 @@ class FlatDictParserTests: XCTestCase {
         ]
 
         let result = try FlatDictConfigParser(data: data, separator: "_").decode()
-        XCTAssertEqual(result["arraystring"] as! Array<String?>, ["0", "1", nil, nil, nil, "5"])
+        XCTAssertEqual(result["arraystring"] as! [String?], ["0", "1", nil, nil, nil, "5"])
     }
 
     func testArrayMissingIndexesInNestedTypeShouldBeFilledWithNil() throws {
@@ -83,8 +83,8 @@ class FlatDictParserTests: XCTestCase {
 
         let result = try FlatDictConfigParser(data: data, separator: "_").decode()
         XCTAssertEqual(
-                result["arraystring"] as! Array<Dictionary<String, String>?>,
-                [["test": "0"], ["test": "1"], nil, ["test": "3"]]
+            result["arraystring"] as! [[String: String]?],
+            [["test": "0"], ["test": "1"], nil, ["test": "3"]]
         )
     }
 
@@ -105,12 +105,12 @@ class FlatDictParserTests: XCTestCase {
 }
 
 // MARK: Manifest
+
 extension FlatDictParserTests {
     static let allTests = [
         ("testParseFromEnv", testParseFromEnv),
         ("testArrayMissingIndexesShouldBeFilledWithNil", testArrayMissingIndexesShouldBeFilledWithNil),
         ("testArrayMissingIndexesInNestedTypeShouldBeFilledWithNil", testArrayMissingIndexesInNestedTypeShouldBeFilledWithNil),
-        ("testOverrideOfComplexTypeValueShouldFail", testOverrideOfComplexTypeValueShouldFail),
+        ("testOverrideOfComplexTypeValueShouldFail", testOverrideOfComplexTypeValueShouldFail)
     ]
 }
-

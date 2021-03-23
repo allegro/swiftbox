@@ -30,26 +30,25 @@ struct TestConfiguration: Decodable, Equatable {
 }
 
 class ConfigurationParsingTests: XCTestCase {
-
     func testConfigShouldParseProperly() throws {
         let expectedConfig = TestConfiguration(
-                nested: TestConfiguration.NestedConfiguration(
-                        null: nil,
-                        nullableInt: nil,
-                        arrayString: ["arraystring0", "arraystring1"],
-                        deep: TestConfiguration.NestedConfiguration.DeepNestedConfiguration(
-                                bool1: true,
-                                bool2: false,
-                                bool3: nil,
-                                bool4: true
-                        )
-                ),
-                string: "string",
-                int: 111,
-                nullableString: "1"
+            nested: TestConfiguration.NestedConfiguration(
+                null: nil,
+                nullableInt: nil,
+                arrayString: ["arraystring0", "arraystring1"],
+                deep: TestConfiguration.NestedConfiguration.DeepNestedConfiguration(
+                    bool1: true,
+                    bool2: false,
+                    bool3: nil,
+                    bool4: true
+                )
+            ),
+            string: "string",
+            int: 111,
+            nullableString: "1"
         )
 
-        let data: [String : Any] = [
+        let data: [String: Any] = [
             "string": "string",
             "int": 111,
             "nullableString": "1",
@@ -61,9 +60,9 @@ class ConfigurationParsingTests: XCTestCase {
                     "bool1": true,
                     "bool2": false,
                     "bool3": nil,
-                    "bool4": true,
+                    "bool4": true
                 ]
-            ],
+            ]
         ]
 
         let config = try TestConfiguration(from: DictionaryDecoder(codingPath: [], storage: data))
@@ -78,14 +77,14 @@ class ConfigurationParsingTests: XCTestCase {
         }
 
         let expectedConfig = SampleConf(
-                int: 11,
-                int2: nil,
-                int3: nil
+            int: 11,
+            int2: nil,
+            int3: nil
         )
 
         let data: [String: Any?] = [
             "int": 11,
-            "int2": nil,
+            "int2": nil
         ]
 
         let config = try SampleConf(from: DictionaryDecoder(codingPath: [], storage: data))
@@ -106,11 +105,11 @@ class ConfigurationParsingTests: XCTestCase {
             }
         }
 
-        let data: [String : Any] = [:]
+        let data: [String: Any] = [:]
         let config = try NullableConfig(from: DictionaryDecoder(codingPath: [], storage: data))
         XCTAssertEqual(
-                config,
-                NullableConfig(int: nil, string: nil, bool: nil, nullarray: nil, arrayofnulls: [], nested: nil)
+            config,
+            NullableConfig(int: nil, string: nil, bool: nil, nullarray: nil, arrayofnulls: [], nested: nil)
         )
     }
 
@@ -133,7 +132,7 @@ class ConfigurationParsingTests: XCTestCase {
             }
         }
 
-        let data: [String : Any] = [
+        let data: [String: Any] = [
             "int": "1",
             "string": "1",
             "bool": "1",
@@ -143,26 +142,26 @@ class ConfigurationParsingTests: XCTestCase {
             "nested": [
                 "int": "0",
                 "string": "0",
-                "bool": "0",
-            ],
+                "bool": "0"
+            ]
         ]
 
         let config = try CoerceConfig(from: DictionaryDecoder(codingPath: [], storage: data))
         XCTAssertEqual(
-                config,
-                CoerceConfig(
-                        int: 1,
-                        string: "1",
-                        bool: true,
-                        intarray: [1, 2, -1],
-                        stringarray: ["1", "2", "-1"],
-                        boolarray: [true, false, true, false],
-                        nested: CoerceConfig.Nested(
-                                int: 0,
-                                string: "0",
-                                bool: false
-                        )
+            config,
+            CoerceConfig(
+                int: 1,
+                string: "1",
+                bool: true,
+                intarray: [1, 2, -1],
+                stringarray: ["1", "2", "-1"],
+                boolarray: [true, false, true, false],
+                nested: CoerceConfig.Nested(
+                    int: 0,
+                    string: "0",
+                    bool: false
                 )
+            )
         )
     }
 
@@ -172,18 +171,18 @@ class ConfigurationParsingTests: XCTestCase {
             var float: Float
         }
 
-        let data: [String : Any] = [
+        let data: [String: Any] = [
             "double": "2.3",
-            "float": "4",
+            "float": "4"
         ]
 
         let config = try NumericConfig(from: DictionaryDecoder(codingPath: [], storage: data))
         XCTAssertEqual(
-                config,
-                NumericConfig(
-                        double: 2.3,
-                        float: 4
-                )
+            config,
+            NumericConfig(
+                double: 2.3,
+                float: 4
+            )
         )
     }
 
@@ -192,8 +191,8 @@ class ConfigurationParsingTests: XCTestCase {
             var bool: Bool
         }
 
-        let data: [String : Any] = [
-            "bool": "3",
+        let data: [String: Any] = [
+            "bool": "3"
         ]
 
         XCTAssertThrowsError(try BoolConfig(from: DictionaryDecoder(codingPath: [], storage: data))) { error in
@@ -209,6 +208,7 @@ class ConfigurationParsingTests: XCTestCase {
 }
 
 // MARK: Manifest
+
 extension ConfigurationParsingTests {
     static let allTests = [
         ("testConfigShouldParseProperly", testConfigShouldParseProperly),
@@ -216,6 +216,6 @@ extension ConfigurationParsingTests {
         ("testOptionalsShouldBeHandledProperly", testOptionalsShouldBeHandledProperly),
         ("testValuesShouldBeCoerced", testValuesShouldBeCoerced),
         ("testNumericValuesShouldBeParsedToRightType", testNumericValuesShouldBeParsedToRightType),
-        ("testBoolCastShouldRaiseErrorOnWrongValue", testBoolCastShouldRaiseErrorOnWrongValue),
+        ("testBoolCastShouldRaiseErrorOnWrongValue", testBoolCastShouldRaiseErrorOnWrongValue)
     ]
 }

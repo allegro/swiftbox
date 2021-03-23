@@ -2,7 +2,7 @@ import Foundation
 
 import SwiftBoxLogging
 
-private var logger = Logging.make(#file)
+private let logger = Logging.make(#file)
 
 /// Config Manager protocol that Application Configuration Manager must conform to.
 ///
@@ -45,10 +45,10 @@ private var logger = Logging.make(#file)
 /// Config cannot be bootstrapped more than once.
 /// It will throw a fatalError if any of above occurs.
 public protocol ConfigManager {
-    associatedtype T: Configuration
+    associatedtype ConfigurationType: Configuration
 
-    static var configuration: T? { get set }
-    static var global: T { get }
+    static var configuration: ConfigurationType? { get set }
+    static var global: ConfigurationType { get }
     static func bootstrap(from sources: [ConfigSource]) throws
 }
 
@@ -56,18 +56,18 @@ public typealias Configuration = Decodable
 
 /// Extension with default implementations for Manager
 extension ConfigManager {
-    public static var global: T {
-            return try! getConfiguration()
-        }
+    public static var global: ConfigurationType {
+        return try! getConfiguration()
+    }
 
-    internal static func getConfiguration() throws -> T {
-        guard let config = self.configuration else {
+    internal static func getConfiguration() throws -> ConfigurationType {
+        guard let config = configuration else {
             throw ConfigManagerError.bootstrapRequired
         }
         return config
     }
 
-    internal static func setConfiguration(value: T) throws {
+    internal static func setConfiguration(value: ConfigurationType) throws {
         if configuration != nil {
             throw ConfigManagerError.alreadyBootstrapped
         }
@@ -90,7 +90,7 @@ extension ConfigManager {
         }
 
         // swiftformat:disable redundantInit
-        let config = try T.init(from: DictionaryDecoder(codingPath: [], storage: result))
+        let config = try ConfigurationType.init(from: DictionaryDecoder(codingPath: [], storage: result))
         try setConfiguration(value: config)
     }
 

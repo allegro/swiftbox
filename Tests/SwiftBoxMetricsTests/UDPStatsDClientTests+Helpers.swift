@@ -6,13 +6,13 @@ import NIO
 /// Copied from /NIOTests/DatagramChannelTests.swift
 extension Channel {
     func waitForDatagrams(count: Int) throws -> [AddressedEnvelope<ByteBuffer>] {
-        return try self.pipeline.context(name: "ByteReadRecorder").flatMap { context in
+        return try pipeline.context(handlerType: DatagramReadRecorder<ByteBuffer>.self).flatMap { context in
             if let future = (context.handler as? DatagramReadRecorder<ByteBuffer>)?.notifyForDatagrams(count) {
                 return future
             }
 
             XCTFail("Could not wait for reads")
-            return self.eventLoop.newSucceededFuture(result: [] as [AddressedEnvelope<ByteBuffer>])
+            return self.eventLoop.makeSucceededFuture([] as [AddressedEnvelope<ByteBuffer>])
         }.wait()
     }
 }
@@ -31,40 +31,46 @@ class DatagramReadRecorder<DataType>: ChannelInboundHandler {
     }
 
     var reads: [AddressedEnvelope<DataType>] = []
-    var loop: EventLoop? = nil
+    var loop: EventLoop?
     var state: State = .fresh
 
     var readWaiters: [Int: EventLoopPromise<[AddressedEnvelope<DataType>]>] = [:]
+    var readCompleteCount = 0
 
-    func channelRegistered(ctx: ChannelHandlerContext) {
-        XCTAssertEqual(.fresh, self.state)
-        self.state = .registered
-        self.loop = ctx.eventLoop
+    func channelRegistered(context: ChannelHandlerContext) {
+        XCTAssertEqual(.fresh, state)
+        state = .registered
+        loop = context.eventLoop
     }
 
-    func channelActive(ctx: ChannelHandlerContext) {
-        XCTAssertEqual(.registered, self.state)
-        self.state = .active
+    func channelActive(context _: ChannelHandlerContext) {
+        XCTAssertEqual(.registered, state)
+        state = .active
     }
 
-    func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
-        XCTAssertEqual(.active, self.state)
-        let data = self.unwrapInboundIn(data)
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        XCTAssertEqual(.active, state)
+        let data = unwrapInboundIn(data)
         reads.append(data)
 
         if let promise = readWaiters.removeValue(forKey: reads.count) {
-            promise.succeed(result: reads)
+            promise.succeed(reads)
         }
 
-        ctx.fireChannelRead(self.wrapInboundOut(data))
+        context.fireChannelRead(wrapInboundOut(data))
+    }
+
+    func channelReadComplete(context: ChannelHandlerContext) {
+        readCompleteCount += 1
+        context.fireChannelReadComplete()
     }
 
     func notifyForDatagrams(_ count: Int) -> EventLoopFuture<[AddressedEnvelope<DataType>]> {
         guard reads.count < count else {
-            return loop!.newSucceededFuture(result: .init(reads.prefix(count)))
+            return loop!.makeSucceededFuture(.init(reads.prefix(count)))
         }
 
-        readWaiters[count] = loop!.newPromise()
+        readWaiters[count] = loop!.makePromise()
         return readWaiters[count]!.futureResult
     }
 }

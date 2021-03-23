@@ -7,3 +7,4 @@ build
 Package.resolved
 tests.xml
 .DS_Store
+*.swiftpm/*
