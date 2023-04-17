@@ -2,6 +2,7 @@ import Foundation
 import XCTest
 
 @testable import NIO
+@testable import NIOCore
 @testable import SwiftBoxMetrics
 
 final class TCPStatsDClientTests: XCTestCase {
@@ -23,12 +24,13 @@ final class TCPStatsDClientTests: XCTestCase {
                 config: TCPConnectionConfig(
                     host: "localhost",
                     connectionFactory: { _ in
-                            return EventLoopFuture(
-                                eventLoop: eventLoop,
-                                value: channel,
+                        let future: EventLoopFuture<Channel> = EventLoopFuture(
+                            _eventLoop: eventLoop,
                                 file: #file,
                                 line: #line
                             )
+                        future._value = .success(channel)
+                        return future
                         }
                 )
         )
@@ -54,12 +56,13 @@ final class TCPStatsDClientTests: XCTestCase {
             host: "localhost",
             connectionFactory: { _ in
                 countChannelInitialization += 1
-                return EventLoopFuture(
-                    eventLoop: eventLoop,
-                    value: channel,
+                let future: EventLoopFuture<Channel> = EventLoopFuture(
+                    _eventLoop: eventLoop,
                     file: #file,
                     line: #line
                 )
+                future._value = .success(channel)
+                return future
             }
         )
 
@@ -81,12 +84,13 @@ final class TCPStatsDClientTests: XCTestCase {
                     connectionTimeout: TimeAmount.milliseconds(100),
                     connectionFactory: { _ in
                             countChannelInitialization += 1
-                            return EventLoopFuture(
-                                eventLoop: eventLoop,
-                                error: ChannelError.ioOnClosedChannel,
+                        let future: EventLoopFuture<Channel> = EventLoopFuture(
+                                _eventLoop: eventLoop,
                                 file: #file,
                                 line: #line
                             )
+                        future._value = .failure(ChannelError.ioOnClosedChannel)
+                        return future
                         }
                 )
         )
