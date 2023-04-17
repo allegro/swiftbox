@@ -16,7 +16,7 @@ let package = Package(
                 .package(
                         name: "swift-nio-ssl",
                         url: "https://github.com/apple/swift-nio-ssl",
-                        from: "2.8.0"
+                        from: "2.23.1"
                 ),
                 .package(
                         url: "https://github.com/apple/swift-metrics.git", "1.0.0" ..< "3.0.0"
@@ -28,7 +28,7 @@ let package = Package(
                 .package(
                         name: "SwiftTestReporter",
                         url: "https://github.com/allegro/swift-junit.git",
-                        from: "1.0.0"
+                        from: "2.0.0"
                 )
         ],
         targets: [
